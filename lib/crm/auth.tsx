@@ -21,6 +21,7 @@ interface AuthValue {
   ready: boolean; // supabase configured?
   loading: boolean;
   profilesReady: boolean; // full directory loaded (mappings are exact past this point)
+  profileError: string | null;
   user: User | null;
   profile: ProfileRow | null;
   profiles: ProfileRow[];
@@ -69,6 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(ready);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<ProfileRow | null>(null);
+  const [profileError, setProfileError] = useState<string | null>(null);
   const [allProfiles, setAllProfiles] = useState<ProfileRow[]>([]);
   const [profilesReady, setProfilesReady] = useState(false);
 
@@ -77,16 +79,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data } = await sb.from("profiles").select("*").eq("id", userId).maybeSingle();
     if (data) {
       setProfile(data as ProfileRow);
+      setProfileError(null);
       return data as ProfileRow;
     }
-    // First login: self-provision (migration grants INSERT on own id)
-    const { data: created } = await sb
-      .from("profiles")
-      .insert({ id: userId, email: email ?? null })
-      .select("*")
-      .maybeSingle();
-    if (created) setProfile(created as ProfileRow);
-    return (created as ProfileRow | null) ?? null;
+    // No auto-provisioning: accounts are created by owners/admins (invite),
+    // so a missing profile means revoked/never-set-up access — never silently
+    // recreate it (that would resurrect deleted accounts as BDPs).
+    await sb.auth.signOut();
+    setUser(null);
+    setProfile(null);
+    setProfileError("No team profile found for this account. Ask your administrator to set up your access.");
+    return null;
   }, []);
 
   const loadAll = useCallback(async () => {
@@ -157,11 +160,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const members = allProfiles.map(profileToMember);
     const currentMember = profile ? profileToMember(profile) : null;
     return {
-      ready, loading, profilesReady, user, profile, profiles: allProfiles, members, currentMember,
+      ready, loading, profilesReady, profileError, user, profile, profiles: allProfiles, members, currentMember,
       signIn, signUp, signOut,
       refreshProfile: async () => { if (user) await loadProfile(user.id, user.email); },
     };
-  }, [ready, loading, profilesReady, user, profile, allProfiles, signIn, signUp, signOut, loadProfile]);
+  }, [ready, loading, profilesReady, profileError, user, profile, allProfiles, signIn, signUp, signOut, loadProfile]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

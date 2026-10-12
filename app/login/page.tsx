@@ -65,6 +65,7 @@ function SignInForm() {
           <div><Label>Password</Label><Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="mt-1 h-11 rounded-xl" autoComplete="current-password"
             onKeyDown={(e) => { if (e.key === "Enter") submit(); }} /></div>
           {error && <p className="rounded-xl bg-red-600/10 px-4 py-2.5 text-[13px] text-red-800">{error}</p>}
+          {auth.profileError && <p className="rounded-xl bg-red-600/10 px-4 py-2.5 text-[13px] text-red-800">{auth.profileError}</p>}
           <Button className="w-full rounded-full bg-foreground text-background" disabled={busy || auth.loading} onClick={submit}>
             {busy ? "Signing you in…" : "Sign in"}
           </Button>
