@@ -201,7 +201,13 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
       if (!seen.has(key)) { seen.add(key); members.push(m); }
     }
     const currentUser =
-      (auth.currentMember && members.find((m) => m.id === remapSquad(auth.currentMember as Member).id)) ??
+      (auth.ready && (auth.loading || (auth.user && !auth.currentMember)))
+        ? {
+            id: "resolving", name: "Loading…", email: "",
+            role: "bdp" as const, squadId: null, cohortId: "", status: "active" as const,
+            joinedAt: new Date().toISOString(), lastActiveAt: new Date().toISOString(), commissionRate: 0,
+          }
+        : (auth.currentMember && members.find((m) => m.id === remapSquad(auth.currentMember as Member).id)) ??
       members.find((m) => m.id === state.currentUserId) ??
       members[0] ??
       state.members[0] ?? {
