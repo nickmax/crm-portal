@@ -149,25 +149,33 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
           lastPushedRef.current = clean;
           setSyncStatus("synced");
         } else {
-          // Adopt remote as truth (per-slice fallback to local when empty).
+          // Adopt remote as truth, but UNION in local-only rows (created
+          // offline or still awaiting push) so no device-side work is dropped.
+          // Remote wins on id conflicts.
+          const union = <T extends { id: string }>(remoteRows: T[] | undefined, localRows: T[], fallback: T[]): T[] => {
+            const base = remoteRows && remoteRows.length ? remoteRows : fallback;
+            const ids = new Set(base.map((r) => r.id));
+            return [...base, ...localRows.filter((r) => !ids.has(r.id))];
+          };
+          const local = stateRef.current;
           const merged: CrmState = {
             ...local,
             cohorts: partial.cohorts?.length ? partial.cohorts : local.cohorts,
             squads: partial.squads?.length ? partial.squads : local.squads,
-            companies: partial.companies ?? local.companies,
-            contacts: partial.contacts ?? local.contacts,
-            leads: partial.leads ?? local.leads,
-            opportunities: partial.opportunities ?? local.opportunities,
-            tasks: partial.tasks ?? local.tasks,
-            meetings: partial.meetings ?? local.meetings,
+            companies: union(partial.companies, local.companies, local.companies),
+            contacts: union(partial.contacts, local.contacts, local.contacts),
+            leads: union(partial.leads, local.leads, local.leads),
+            opportunities: union(partial.opportunities, local.opportunities, local.opportunities),
+            tasks: union(partial.tasks, local.tasks, local.tasks),
+            meetings: union(partial.meetings, local.meetings, local.meetings),
             proposals: partial.proposals?.length ? partial.proposals : local.proposals,
-            deals: partial.deals ?? local.deals,
-            payments: partial.payments ?? local.payments,
-            commissions: partial.commissions ?? local.commissions,
+            deals: union(partial.deals, local.deals, local.deals),
+            payments: union(partial.payments, local.payments, local.payments),
+            commissions: union(partial.commissions, local.commissions, local.commissions),
             activities: partial.activities ?? local.activities,
             campaigns: partial.campaigns?.length ? partial.campaigns : local.campaigns,
             audit: partial.audit ?? [...local.audit],
-            notifications: partial.notifications ?? local.notifications,
+            notifications: union(partial.notifications, local.notifications, local.notifications),
           };
           // Append-only trackers: merge remote + any local-only entries.
           const remoteAct = new Set((partial.activities ?? []).map((a) => `${a.leadId}|${a.summary}|${a.createdAt}`));
