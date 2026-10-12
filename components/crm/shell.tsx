@@ -15,12 +15,17 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
-const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
-  "layout-dashboard": LayoutDashboard, target: Target, kanban: KanbanSquare,
+const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {  "layout-dashboard": LayoutDashboard, target: Target, kanban: KanbanSquare,
   check: CheckSquare, calendar: CalendarDays, users: Users, wallet: Wallet,
   megaphone: Megaphone, chart: BarChart3, id: IdCard, settings: Settings,
   send: Send, folder: FolderOpen, book: BookOpen,
 };
+
+const PUBLIC_AUTH_ROUTES = ["/login", "/forgot-password", "/set-password", "/auth/"];
+
+function isPublicAuthRoute(pathname: string): boolean {
+  return PUBLIC_AUTH_ROUTES.some((r) => pathname === r || pathname.startsWith(r));
+}
 
 export function CrmShell({ children }: { children: React.ReactNode }) {
   const { currentUser, members, switchUser, notifications, tasks, remote, syncStatus, syncError, retrySync } = useCrm();
@@ -30,12 +35,13 @@ export function CrmShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (pathname === "/login") return;
+    if (isPublicAuthRoute(pathname)) return;
     if (auth.ready && !auth.loading && !auth.user) router.replace("/login");
   }, [auth.ready, auth.loading, auth.user, router, pathname]);
 
-  // Hide shell on login page (after all hooks)
-  if (pathname === "/login") return <>{children}</>;
+  // Public auth routes render without the shell or the sign-in gate —
+  // they must work with NO session (invite links, resets, new passwords).
+  if (isPublicAuthRoute(pathname)) return <>{children}</>;
 
   const nav = NAV_BY_ROLE[currentUser.role] ?? NAV_BY_ROLE.bdp;
   const myUnread = notifications.filter((n) => n.userId === currentUser.id && !n.read).length;

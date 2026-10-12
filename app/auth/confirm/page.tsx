@@ -52,6 +52,7 @@ function ConfirmInner() {
       <Card className="mt-8 w-full rounded-2xl">
         <CardContent className="space-y-3 px-6 py-6">
           <p className="text-center text-sm text-muted-foreground">{t.body}</p>
+          {!token_hash && <p className="rounded-xl bg-red-600/10 px-4 py-2.5 text-[13px] text-red-800">This link is incomplete — ask your administrator for a fresh one.</p>}
           {error && <p className="rounded-xl bg-red-600/10 px-4 py-2.5 text-[13px] text-red-800">{error}</p>}
           <Button className="w-full rounded-full bg-foreground text-background" disabled={busy || !token_hash} onClick={confirm}>
             {busy ? "Confirming…" : t.cta}
