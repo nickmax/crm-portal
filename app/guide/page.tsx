@@ -56,6 +56,11 @@ export default function GuidePage() {
         </aside>
 
         <div className="min-w-0 space-y-10">
+          <Link href="/guide/field-manual" className="block rounded-2xl border border-foreground bg-foreground p-6 text-background transition-transform hover:-translate-y-0.5 sm:p-8">
+            <p className="font-mono text-[11px] uppercase tracking-widest opacity-70">The full playbook · 25 chapters + scripts</p>
+            <p className="mt-1 font-display text-3xl tracking-tight sm:text-4xl">BDP Field Guide →</p>
+            <p className="mt-2 max-w-xl text-sm opacity-80">Signals, industry maps, every email/WhatsApp/call script, objections, follow-up sequences, scorecards — copy-ready for the field. Keep it open on your phone.</p>
+          </Link>
           <Chapter id="start" eyebrow="Chapter 1" title="Your first day">
             <Step n="1" title="Open your invite email" body="Tap the button, confirm it's you, and choose your password. The link lasts 24 hours — ask your captain for a fresh one if it expires." />
             <Step n="2" title="Sign in at crm.mathengeinc.com" body="Use your work email. Forgot it later? Tap “Forgot password?” on the sign-in screen." />
