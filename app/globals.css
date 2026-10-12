@@ -196,3 +196,39 @@
   .marquee, .marquee-reverse { animation: none; }
   .animate-char-in { animation: none; opacity: 1; filter: none; transform: none; }
 }
+
+/* ---- Mobile field use: BDPs work from phones ---- */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    overflow-x: clip;
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* iOS zooms on focus when form text is under 16px — hold the layout steady */
+  @media (max-width: 640px) {
+    input:not([type="checkbox"]):not([type="radio"]),
+    select,
+    textarea {
+      font-size: 16px;
+    }
+    /* Every tappable meets the 44px touch target without changing desktop */
+    button,
+    a.rounded-full {
+      min-height: 44px;
+    }
+    button[class*="icon"],
+    a[class*="icon"] {
+      min-height: 40px;
+      min-width: 40px;
+    }
+  }
+  button,
+  a,
+  summary,
+  select,
+  label {
+    touch-action: manipulation;
+  }
+}

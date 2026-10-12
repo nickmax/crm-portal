@@ -160,7 +160,7 @@ export function CrmShell({ children }: { children: React.ReactNode }) {
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-foreground/30" onClick={() => setOpen(false)} />
           <aside className="absolute left-0 top-0 h-full w-[300px] bg-background shadow-xl">
-            <button onClick={() => setOpen(false)} className="absolute right-3 top-4 rounded-full border border-foreground/15 p-2" aria-label="Close menu">
+            <button onClick={() => setOpen(false)} className="absolute right-3 top-4 rounded-full border border-foreground/15 p-2.5" aria-label="Close menu">
               <X className="h-4 w-4" />
             </button>
             {sidebar}
@@ -172,7 +172,7 @@ export function CrmShell({ children }: { children: React.ReactNode }) {
         <header className="sticky top-0 z-40 px-4 pt-4 lg:px-8">
           <div className="flex h-14 items-center justify-between gap-3 rounded-2xl border border-foreground/10 bg-background/80 px-4 shadow-sm backdrop-blur-xl lg:px-6">
             <div className="flex items-center gap-3">
-              <button className="rounded-full border border-foreground/15 p-2 lg:hidden" onClick={() => setOpen(true)} aria-label="Open menu">
+              <button className="rounded-full border border-foreground/15 p-2.5 lg:hidden" onClick={() => setOpen(true)} aria-label="Open menu">
                 <Menu className="h-4 w-4" />
               </button>
               <span className="hidden items-center gap-3 font-mono text-xs text-muted-foreground sm:flex">

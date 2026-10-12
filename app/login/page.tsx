@@ -19,7 +19,7 @@ export default function LoginPage() {
       <span className="mt-4 rounded-full border border-foreground/15 px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
         BDP CRM · Sign in
       </span>
-      <h1 className="mt-4 text-center font-display text-5xl tracking-tight">The operating system for your sales network</h1>
+      <h1 className="mt-4 text-center font-display text-4xl tracking-tight sm:text-5xl">The operating system for your sales network</h1>
       {auth.ready ? (
         <Suspense fallback={<p className="mt-8 font-mono text-xs text-muted-foreground">Loading…</p>}>
           <SignInForm />

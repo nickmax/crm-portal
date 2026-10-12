@@ -19,7 +19,7 @@ export function PageHead({ eyebrow, title, sub, action }: { eyebrow: string; tit
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div>
         <Eyebrow>{eyebrow}</Eyebrow>
-        <h1 className="mt-2 font-display text-4xl tracking-tight lg:text-5xl">{title}</h1>
+        <h1 className="mt-2 font-display text-3xl tracking-tight sm:text-4xl lg:text-5xl">{title}</h1>
         {sub && <p className="mt-2 max-w-xl text-muted-foreground">{sub}</p>}
       </div>
       {action && <div className="flex items-center gap-2">{action}</div>}

@@ -78,7 +78,7 @@ export default function LeadDetailPage() {
     <div>
       <Eyebrow>Company &amp; lead profile</Eyebrow>
       <div className="mt-2 flex flex-wrap items-center gap-3">
-        <h1 className="font-display text-4xl tracking-tight lg:text-5xl">{company?.name}</h1>
+        <h1 className="font-display text-3xl tracking-tight sm:text-4xl lg:text-5xl">{company?.name}</h1>
         <LeadBadge status={lead.status} />
       </div>
       <p className="mt-2 text-muted-foreground">{company?.industry} · {company?.location} · Owner {owner?.name} · Source: {lead.source}</p>
@@ -89,7 +89,7 @@ export default function LeadDetailPage() {
           <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Log an interaction · under 30 seconds</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {QUICK.map((k) => (
-              <button key={k} onClick={() => setLogOpen(k)} className="rounded-full border border-foreground/15 px-4 py-2 text-[13px] font-medium hover:bg-foreground hover:text-background">{k}</button>
+              <button key={k} onClick={() => setLogOpen(k)} className="inline-flex min-h-[44px] items-center rounded-full border border-foreground/15 px-4 py-2 text-[13px] font-medium hover:bg-foreground hover:text-background">{k}</button>
             ))}
           </div>
           {logOpen && (

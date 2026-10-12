@@ -12,7 +12,7 @@ function CopyBtn({ text }: { text: string }) {
   return (
     <button
       onClick={() => { navigator.clipboard?.writeText(text); setDone(true); setTimeout(() => setDone(false), 1500); }}
-      className="flex shrink-0 items-center gap-1.5 rounded-full border border-foreground/15 px-3 py-1.5 text-xs font-medium hover:bg-foreground hover:text-background"
+      className="flex shrink-0 items-center gap-1.5 rounded-full border border-foreground/15 px-3 py-1.5 text-xs font-medium hover:bg-foreground hover:text-background min-h-[40px]"
       aria-label="Copy to clipboard"
     >
       {done ? <><Check className="h-3 w-3" /> Copied</> : <><Copy className="h-3 w-3" /> Copy</>}
@@ -94,6 +94,14 @@ export default function FieldManualPage() {
         </aside>
 
         <div className="min-w-0 space-y-10">
+          <details className="rounded-xl border border-foreground/15 bg-card px-4 py-3 lg:hidden">
+            <summary className="cursor-pointer py-1 text-sm font-medium">Contents — jump to a chapter</summary>
+            <nav className="grid max-h-[50vh] gap-0.5 overflow-y-auto pb-2 pt-2" aria-label="Field guide contents">
+              {CONTENTS.map(([id, label]) => (
+                <a key={id} href={`#${id}`} className="rounded-lg px-3 py-2.5 text-sm text-foreground/80 hover:bg-foreground/5">{label}</a>
+              ))}
+            </nav>
+          </details>
           <Card className="rounded-xl border-foreground/20">
             <CardContent className="px-5 py-5">
               <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Operating principle</p>

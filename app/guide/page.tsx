@@ -56,6 +56,14 @@ export default function GuidePage() {
         </aside>
 
         <div className="min-w-0 space-y-10">
+          <details className="rounded-xl border border-foreground/15 bg-card px-4 py-3 lg:hidden">
+            <summary className="cursor-pointer py-1 text-sm font-medium">Contents — jump to a chapter</summary>
+            <nav className="grid gap-0.5 pb-2 pt-2" aria-label="Guide contents">
+              {CONTENTS.map(([id, label]) => (
+                <a key={id} href={`#${id}`} className="rounded-lg px-3 py-2.5 text-sm text-foreground/80 hover:bg-foreground/5">{label}</a>
+              ))}
+            </nav>
+          </details>
           <Link href="/guide/field-manual" className="block rounded-2xl border border-foreground bg-foreground p-6 text-background transition-transform hover:-translate-y-0.5 sm:p-8">
             <p className="font-mono text-[11px] uppercase tracking-widest opacity-70">The full playbook · 25 chapters + scripts</p>
             <p className="mt-1 font-display text-3xl tracking-tight sm:text-4xl">BDP Field Guide →</p>

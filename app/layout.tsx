@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${instrumentSans.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
         <AuthProvider>
           <CrmProvider>
-            <div className="relative min-h-screen noise-overlay">
+            <div className="relative min-h-screen overflow-x-clip noise-overlay">
               <CrmShell>{children}</CrmShell>
             </div>
           </CrmProvider>

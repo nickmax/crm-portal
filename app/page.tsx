@@ -28,7 +28,7 @@ export default function HomePage() {
       <div>
         <Eyebrow>My workspace</Eyebrow>
         <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
-          <h1 className="font-display text-4xl tracking-tight lg:text-5xl">Karibu, {currentUser.name.split(" ")[0]}</h1>
+          <h1 className="font-display text-3xl tracking-tight sm:text-4xl lg:text-5xl">Karibu, {currentUser.name.split(" ")[0]}</h1>
           <Button asChild className="rounded-full bg-foreground text-background"><Link href="/leads?new=1">+ Register lead</Link></Button>
         </div>
         <p className="mt-2 text-muted-foreground">Update a lead from your phone in under a minute. Everything here is yours only.</p>
@@ -87,7 +87,7 @@ export default function HomePage() {
     return (
       <div>
         <Eyebrow>Closing home</Eyebrow>
-        <h1 className="mt-2 font-display text-4xl tracking-tight lg:text-5xl">Your deals, end to end</h1>
+        <h1 className="mt-2 font-display text-3xl tracking-tight sm:text-4xl lg:text-5xl">Your deals, end to end</h1>
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           <StatCard label="Assigned opportunities" value={String(mine.length)} href="/pipeline" />
           <StatCard label="Proposal value" value={fmtKES(mine.filter((o) => ["proposal", "negotiation"].includes(o.stage)).reduce((a, o) => a + o.value, 0))} href="/pipeline" />
@@ -115,7 +115,7 @@ export default function HomePage() {
   return (
     <div>
       <Eyebrow>Squad home</Eyebrow>
-      <h1 className="mt-2 font-display text-4xl tracking-tight lg:text-5xl">Unblock your squad</h1>
+      <h1 className="mt-2 font-display text-3xl tracking-tight sm:text-4xl lg:text-5xl">Unblock your squad</h1>
       <div className="mt-6 grid gap-3 sm:grid-cols-3">
         <StatCard label="Squad leads" value={String(squadLeads.length)} href="/leads" />
         <StatCard label="Overdue tasks" value={String(squadOverdue.length)} hint="Review first" href="/tasks" />
@@ -151,7 +151,7 @@ function OwnerHome() {
     <div>
       <Eyebrow>Mathenge Inc. — Sales Command Centre</Eyebrow>
       <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
-        <h1 className="font-display text-4xl tracking-tight lg:text-5xl">The whole business, one screen</h1>
+        <h1 className="font-display text-3xl tracking-tight sm:text-4xl lg:text-5xl">The whole business, one screen</h1>
         <div className="flex gap-2">
           <Button asChild variant="outline" className="rounded-full"><Link href="/reports">Auto reports</Link></Button>
           <Button asChild className="rounded-full bg-foreground text-background"><Link href="/leads?new=1">+ Register lead</Link></Button>

@@ -87,7 +87,7 @@ export default function PipelinePage() {
                       <p className="text-xs text-muted-foreground">Close {new Date(o.expectedClose).toLocaleDateString()} · {o.decisionMaker}</p>
                       <div className="mt-2 flex flex-wrap gap-1.5">
                         {OPP_STAGES.filter((x) => x !== stage && x !== "lost" && x !== "won").slice(0, 3).map((nx) => (
-                          <button key={nx} onClick={() => move(o.id, nx)} className="rounded-full border border-foreground/15 px-2.5 py-1 text-[11px] hover:bg-foreground hover:text-background">→ {nx.replace(/_/g, " ")}</button>
+                          <button key={nx} onClick={() => move(o.id, nx)} className="inline-flex min-h-[40px] items-center rounded-full border border-foreground/15 px-3 py-1.5 text-[11px] hover:bg-foreground hover:text-background">→ {nx.replace(/_/g, " ")}</button>
                         ))}
                       </div>
                       <div className="mt-2 flex gap-1.5">

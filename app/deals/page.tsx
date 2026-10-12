@@ -81,7 +81,7 @@ export default function DealsPage() {
               <div key={d.id} className="rounded-xl border border-foreground/10 p-4 text-sm">
                 <div className="flex items-center justify-between"><p className="font-medium">{companyName(s, d.companyId)}</p><Badge className={`rounded-full border-0 ${d.outcome === "won" ? "bg-green-700 text-white" : "bg-red-600/15 text-red-800"}`}>{d.outcome}</Badge></div>
                 <p className="mt-1 text-muted-foreground">Contract {fmtKES(d.contractValue)} · Collected {fmtKES(d.collected)} {d.lossReason && `· Lost: ${d.lossReason}`}</p>
-                {d.milestones.length > 0 && <p className="mt-1 font-mono text-xs text-muted-foreground">{d.milestones.map((m) => `${m.label} ${fmtKES(m.amount)}${m.collected ? " ✓" : ""}`).join(" · ")}</p>}
+                {d.milestones.length > 0 && <p className="mt-1 break-words font-mono text-xs text-muted-foreground">{d.milestones.map((m) => `${m.label} ${fmtKES(m.amount)}${m.collected ? " ✓" : ""}`).join(" · ")}</p>}
                 {d.outcome === "won" && s.currentUser.role !== "bdp" && (
                   payFor === d.id ? (
                     <div className="mt-2 flex gap-2"><Input value={payAmount} onChange={(e) => setPayAmount(e.target.value)} inputMode="numeric" placeholder="Amount received" className="h-9 rounded-xl" /><Button size="sm" className="rounded-full bg-foreground text-background" onClick={() => recordPayment(d.id)}>Save</Button><Button size="sm" variant="outline" className="rounded-full" onClick={() => setPayFor(null)}>×</Button></div>

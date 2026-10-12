@@ -74,7 +74,7 @@ function LeadsInner() {
         <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search business, industry, source, next action…" className="h-11 rounded-full lg:max-w-md" />
         <div className="flex flex-wrap gap-2">
           {FILTERS.map((f) => (
-            <button key={f} onClick={() => setFilter(f)} className={`rounded-full border px-4 py-2 text-[13px] font-medium transition-colors ${filter === f ? "border-foreground bg-foreground text-background" : "border-foreground/15 hover:bg-foreground/5"}`}>
+            <button key={f} onClick={() => setFilter(f)} className={`inline-flex min-h-[44px] items-center rounded-full border px-4 py-2 text-[13px] font-medium transition-colors ${filter === f ? "border-foreground bg-foreground text-background" : "border-foreground/15 hover:bg-foreground/5"}`}>
               {f}
             </button>
           ))}
@@ -99,7 +99,7 @@ function LeadsInner() {
                     </div>
                     <p className="mt-1 truncate text-[13px] text-muted-foreground">{c?.industry} · {owner?.name} · Last: {new Date(l.lastActivityAt).toLocaleDateString()} · Next: {l.nextAction}</p>
                   </div>
-                  <div className="flex items-center gap-4 lg:text-right">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 lg:text-right">
                     <div><p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Potential</p><p className="font-display text-xl">{fmtKES(l.valuePotential)}</p></div>
                     <div><p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Due</p><p className={`text-sm font-medium ${overdue ? "text-red-700" : ""}`}>{new Date(l.nextDueAt).toLocaleDateString()}</p></div>
                   </div>
