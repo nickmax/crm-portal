@@ -1,0 +1,15 @@
+<!doctype html><html><body style="margin:0;padding:0;background:#f4f2ed;font-family:Georgia,'Times New Roman',serif;color:#1c1a16">
+  <!-- INSTALL: Dashboard → Authentication → Email Templates → "Reauthentication" → paste this file. -->
+  <!-- SUBJECT suggestion: {{ .Token }} is your verification code -->
+  <!-- Uses the 6-digit OTP (docs-safe against link prefetchers — no link at all). -->
+  <div style="max-width:600px;margin:0 auto;padding:32px 20px">
+    <p style="font-family:Menlo,Consolas,monospace;font-size:11px;letter-spacing:3px;color:#8a867c;margin:0 0 8px">MATHENGE INC. · BDP CRM</p>
+    <img src="https://crm.mathengeinc.com/logo.png" alt="Mathenge Inc" width="120" style="display:block;margin:0 0 20px"/>
+    <div style="background:#fffdf9;border:1px solid #e7e2d6;border-radius:14px;padding:32px;text-align:center">
+      <h1 style="font-size:30px;font-weight:400;line-height:1.15;margin:0 0 16px">Your verification code</h1>
+      <p style="font-size:15px;line-height:1.75;margin:0 0 16px">Enter this code to verify it's you. It expires shortly.</p>
+      <p style="font-family:Menlo,Consolas,monospace;font-size:36px;letter-spacing:8px;margin:0">{{ .Token }}</p>
+    </div>
+    <p style="font-family:Arial,sans-serif;font-size:12px;color:#8a867c;margin:20px 0 0">Nairobi, Kenya · Dubai, UAE · info@mathengeinc.com</p>
+  </div>
+</body></html>

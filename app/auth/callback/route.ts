@@ -1,37 +1,23 @@
 import { NextResponse } from "next/server";
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
-import { supabaseEnv } from "@/lib/supabase/config";
 
-// Completes email-link flows (team invites, password resets):
-// /auth/callback?token_hash=…&type=invite|recovery|email_change&next=/set-password
+// Entry point for all email links. Deliberately does NOT verify the token:
+// some email security tools prefetch links, which would burn single-use
+// tokens before the human taps them. Instead we forward to /auth/confirm,
+// where the user taps a button that verifies (docs: "Option 2" pattern).
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const token_hash = url.searchParams.get("token_hash");
-  const type = (url.searchParams.get("type") ?? "magiclink") as
-    "signup" | "invite" | "magiclink" | "recovery" | "email_change";
+  const type = url.searchParams.get("type");
   const next = url.searchParams.get("next") ?? "/";
   const login = new URL("/login", url.origin);
 
-  if (!token_hash) {
+  if (!token_hash || !type) {
     login.searchParams.set("error", "That link is missing its token. Ask your administrator for a fresh one.");
     return NextResponse.redirect(login);
   }
-
-  const store = await cookies();
-  const { url: sbUrl, publishableKey } = supabaseEnv();
-  const supabase = createServerClient(sbUrl, publishableKey, {
-    cookies: {
-      getAll: () => store.getAll(),
-      setAll: (toSet) => {
-        try { toSet.forEach(({ name, value, options }) => store.set(name, value, options)); } catch {}
-      },
-    },
-  });
-  const { error } = await supabase.auth.verifyOtp({ type, token_hash });
-  if (error) {
-    login.searchParams.set("error", "That link is invalid or has expired. Ask your administrator for a fresh one.");
-    return NextResponse.redirect(login);
-  }
-  return NextResponse.redirect(new URL(next, url.origin));
+  const confirm = new URL("/auth/confirm", url.origin);
+  confirm.searchParams.set("token_hash", token_hash);
+  confirm.searchParams.set("type", type);
+  confirm.searchParams.set("next", next);
+  return NextResponse.redirect(confirm);
 }

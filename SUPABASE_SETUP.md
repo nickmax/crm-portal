@@ -40,13 +40,23 @@ No public sign-up exists: accounts are created by you when contracts are signed.
 - Turn OFF "Allow new users to sign up". Sign-in, invites, and password resets keep working.
 
 **C. Email templates (Dashboard → Authentication → Email Templates)**
-- Paste the branded files from `supabase/email-templates/` into:
-  - "Invite user" ← `invite.html` (button → CRM set-password screen)
+- Paste the branded files from `supabase/email-templates/` (subject suggestion is
+  noted at the top of each file):
+  - "Invite user" ← `invite.html` (button → confirm screen → set-password)
   - "Reset password" ← `recovery.html`
   - "Change email address" ← `email-change.html`
-- They point at the app's `/auth/callback` route, which completes the link and
-  lands the user on `/set-password` (first invite / reset) or `/` (email change).
-- Your SMTP sender stays as configured; these only change the design + links.
+  - "Confirm signup" ← `confirmation.html` (only fires if sign-ups are ever enabled)
+  - "Magic link" ← `magic-link.html` (kept ready; the app signs in with passwords)
+  - "Reauthentication" ← `reauthentication.html` (6-digit `{{ .Token }}` code, no link)
+  - Enable + paste "Password changed" ← `password-changed.html`
+  - Enable + paste "Email changed" ← `email-changed.html`
+- All link buttons go to the app's `/auth/callback`, which forwards to an
+  `/auth/confirm` screen where one human tap verifies the token — this is the
+  docs' prefetch-safe pattern, so corporate link scanners can't burn the link.
+  From there: invites/resets → `/set-password`, everything else → `/`.
+- Only docs-supported variables are used (`TokenHash`, `Token`, `SiteURL`,
+  `Email`, `NewEmail`, `OldEmail`). If your SMTP provider offers click/link
+  tracking, leave it OFF so template links aren't rewritten.
 
 **D. Giving someone access (when they sign their contract)**
 1. Dashboard → Authentication → Users → **Invite user** → their work email.
