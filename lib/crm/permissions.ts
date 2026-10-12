@@ -80,6 +80,7 @@ export const NAV_BY_ROLE: Record<Role, { href: string; label: string; icon: stri
     { href: "/files", label: "Files", icon: "folder" },
     { href: "/reports", label: "Reports", icon: "chart" },
     { href: "/team", label: "My squad", icon: "id" },
+    { href: "/guide", label: "BDP guide", icon: "book" },
   ],
   bdp: [
     { href: "/", label: "My workspace", icon: "layout-dashboard" },
@@ -90,6 +91,7 @@ export const NAV_BY_ROLE: Record<Role, { href: string; label: string; icon: stri
     { href: "/deals", label: "My earnings", icon: "wallet" },
     { href: "/campaigns", label: "Campaigns", icon: "megaphone" },
     { href: "/files", label: "Files", icon: "folder" },
+    { href: "/guide", label: "BDP guide", icon: "book" },
   ],
   sales: [
     { href: "/", label: "Closing home", icon: "layout-dashboard" },

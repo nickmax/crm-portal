@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   LayoutDashboard, Target, KanbanSquare, CheckSquare, CalendarDays,
-  Users, Wallet, Megaphone, BarChart3, IdCard, Settings, Menu, X, Bell, LogOut, Send, FolderOpen,
+  Users, Wallet, Megaphone, BarChart3, IdCard, Settings, Menu, X, Bell, LogOut, Send, FolderOpen, BookOpen,
 } from "lucide-react";
 import { useCrm } from "@/lib/crm/store";
 import { useAuth } from "@/lib/crm/auth";
@@ -19,7 +19,7 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   "layout-dashboard": LayoutDashboard, target: Target, kanban: KanbanSquare,
   check: CheckSquare, calendar: CalendarDays, users: Users, wallet: Wallet,
   megaphone: Megaphone, chart: BarChart3, id: IdCard, settings: Settings,
-  send: Send, folder: FolderOpen,
+  send: Send, folder: FolderOpen, book: BookOpen,
 };
 
 export function CrmShell({ children }: { children: React.ReactNode }) {
