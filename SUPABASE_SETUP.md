@@ -59,16 +59,18 @@ No public sign-up exists: accounts are created by you when contracts are signed.
   tracking, leave it OFF so template links aren't rewritten.
 
 **D. Giving someone access (when they sign their contract)**
-1. Dashboard → Authentication → Users → **Invite user** → their work email.
-   (They receive the branded invite and choose their password — no sign-up page.)
-2. Table Editor → `profiles` → find their row → set:
-   - `display_name` = full name (this is the BDP/captain name on every lead,
-     task, meeting and commission — keep it accurate),
-   - `crm_role` = `owner | admin | captain | bdp | sales`,
-   - `squad_id` = their squad's numeric id (from `squads`),
-   - `commission_rate` = e.g. `0.10` for BDPs.
-3. Done — they sign in at `https://crm.mathengeinc.com/login` and see exactly
-   what their role permits. Forgot-password works from the same screen.
+- Easiest: sign in as owner/admin → **Team → Invite a member** → work email,
+  name, role. They get the branded invite email, choose a password, and land in
+  the right role. Squads are assigned afterwards under Cohorts & squads.
+- First human: sign in, then **Team → Claim owner access** (works once — only
+  while no signed-in owner exists), sign out and back in.
+- Starting clean: **Team → Remove demo data** (owner) wipes the sample squads
+  (Mamba, Zawadi…), members and leads locally and remotely, matched by exact
+  demo ids. Real rows are never touched.
+- Dashboard alternative: Users → Invite user, then set `display_name`,
+  `crm_role`, `squad_id`, `commission_rate` on their `profiles` row.
+- `display_name` is the BDP/captain name on every lead, task, meeting and
+  commission — keep it accurate.
 
 ## 4. How the data mapping works
 
