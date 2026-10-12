@@ -32,6 +32,7 @@ interface CrmContextValue extends CrmState {
   update: <K extends keyof CrmState>(key: K, value: CrmState[K]) => void;
   mutate: (fn: (s: CrmState) => CrmState) => void;
   reset: () => void;
+  clearDemo: () => void;
   retrySync: () => void;
 }
 
@@ -177,7 +178,11 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
       (auth.currentMember && members.find((m) => m.id === remapSquad(auth.currentMember as Member).id)) ??
       members.find((m) => m.id === state.currentUserId) ??
       members[0] ??
-      state.members[0];
+      state.members[0] ?? {
+        id: state.currentUserId || "u-owner", name: "Owner", email: "",
+        role: "owner" as const, squadId: null, cohortId: "", status: "active" as const,
+        joinedAt: new Date().toISOString(), lastActiveAt: new Date().toISOString(), commissionRate: 0,
+      };
 
     function remapSquad(m: Member): Member {
       const num = m.squadId && m.squadId.startsWith("sq-") && /^\d+$/.test(m.squadId.slice(3))
@@ -206,6 +211,20 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
         const fresh = initial();
         setState(fresh);
         lastPushedRef.current = fresh; // local-only reset, never deletes remote rows
+      },
+      clearDemo: () => {
+        // Wipe every demo slice locally. Remote demo rows are deleted by
+        // /api/team/clear-demo; remaining diffs are deletions, which never push.
+        setState((st) => {
+          const cleared: CrmState = {
+            ...st,
+            cohorts: [], squads: [], members: [], companies: [], contacts: [], leads: [],
+            opportunities: [], tasks: [], meetings: [], proposals: [], deals: [], payments: [],
+            commissions: [], activities: [], campaigns: [], audit: [], notifications: [],
+          };
+          lastPushedRef.current = cleared;
+          return cleared;
+        });
       },
       retrySync: () => {
         lastPushedRef.current = null;
