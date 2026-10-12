@@ -1,16 +1,20 @@
 -- ============================================================================
--- BDP CRM migration 2 — activity/audit write access
+-- BDP CRM migration 3 — activity writes + stable squad/cohort refs
 -- ----------------------------------------------------------------------------
 -- HOW TO APPLY: Dashboard → SQL Editor → New query → paste → Run. Idempotent.
 --
--- WHY: lead_events (activity timeline) carries a pre-existing restrictive
--- INSERT policy from the lead pipeline, so signed-in CRM users can read it
--- but every activity write is rejected (HTTP 403 "violates row-level
--- security policy"). That also keeps the app's sync status on error.
--- This adds a permissive policy for signed-in users WITHOUT dropping any
--- existing policies (PostgREST allows a row when ANY permissive policy
--- passes, so pipeline behavior is unchanged; service-key writes bypass RLS).
+-- 1. lead_events carries a pre-existing restrictive INSERT policy from the
+--    lead pipeline, so signed-in CRM users get HTTP 403 on every activity
+--    write. This adds a permissive policy WITHOUT dropping existing ones
+--    (any passing policy allows the row; service-key writes bypass RLS, so
+--    pipeline behavior is unchanged).
+-- 2. cohorts/squads gain app_ref (stable ids the CRM uses to survive renames).
+--    (An earlier draft of the CRM migration mentioned app_ref, but this
+--    project ran before that edit — this is the first time it is applied.)
 -- ============================================================================
+
+alter table public.cohorts add column if not exists app_ref text unique;
+alter table public.squads add column if not exists app_ref text unique;
 
 do $$
 declare t text;

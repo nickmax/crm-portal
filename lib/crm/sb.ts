@@ -754,6 +754,7 @@ export async function pushDiff(
 }
 
 // Seed the remote with local demo data — ONLY when no CRM businesses exist.
+// (Kept for scripts/demos; the app no longer auto-seeds a live backend.)
 export async function seedRemoteIfEmpty(
   sb: SupabaseClient, seed: CrmState, ctx: SbCtx, profiles: ProfileRow[]
 ): Promise<PushResult> {

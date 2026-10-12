@@ -55,6 +55,8 @@ export async function DELETE() {
     await wipe("notifications", "app_ref", ids("notifications"));
     await wipe("squads", "app_ref", ids("squads"));
     await wipe("cohorts", "app_ref", ids("cohorts"));
+    // Seed campaign is matched by name (campaigns has no app ref).
+    await svc.from("campaigns").delete().eq("name", "Q1 Growth Sprint — Ordering & Reservations");
     await svc.from("audit_log").insert({
       actor: user.id, action: "Demo data cleared", entity: "system",
       entity_id: "seed", detail: JSON.stringify(removed),

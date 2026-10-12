@@ -9,7 +9,7 @@ import { seedAll, seedCohorts, seedSquads } from "./seed";
 import { useAuth } from "./auth";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
-import { fetchCrmState, pushDiff, seedRemoteIfEmpty, emptyCtx, type SbCtx } from "./sb";
+import { fetchCrmState, pushDiff, emptyCtx, type SbCtx } from "./sb";
 
 export interface CrmState {
   cohorts: Cohort[]; squads: Squad[]; members: Member[];
@@ -136,18 +136,16 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
         const local = stateRef.current;
         const hasRemoteLeads = (partial.leads?.length ?? 0) > 0;
         if (!hasRemoteLeads) {
-          // Fresh backend: no CRM rows exist anywhere, so local data slices can
-          // only be demo seed or unclaimed discovery rows — start clean from
-          // seed and push that (never push unfiltered discovery data).
-          const fresh = initial();
+          // Fresh backend: no CRM rows exist anywhere. Start empty — demo seed
+          // is local-only (logged-out demo mode) and must never pollute a live
+          // system. Real cohorts/squads are created under Cohorts & squads.
           const clean: CrmState = {
-            ...fresh,
-            members: local.members,
-            currentUserId: local.currentUserId,
+            cohorts: [], squads: [], members: local.members, companies: [], contacts: [],
+            leads: [], opportunities: [], tasks: [], meetings: [], proposals: [], deals: [],
+            payments: [], commissions: [], activities: [], campaigns: [], audit: [],
+            notifications: [], currentUserId: local.currentUserId,
           };
           setState(clean);
-          const res = await seedRemoteIfEmpty(sb, clean, ctx, auth.profiles);
-          if (!res.ok) throw new Error(res.errors.slice(0, 3).join(" · ") || "Seed push failed");
           lastPushedRef.current = clean;
           setSyncStatus("synced");
         } else {
