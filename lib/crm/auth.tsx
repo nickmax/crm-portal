@@ -20,6 +20,7 @@ export interface ProfileRow {
 interface AuthValue {
   ready: boolean; // supabase configured?
   loading: boolean;
+  profilesReady: boolean; // full directory loaded (mappings are exact past this point)
   user: User | null;
   profile: ProfileRow | null;
   profiles: ProfileRow[];
@@ -69,6 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<ProfileRow | null>(null);
   const [allProfiles, setAllProfiles] = useState<ProfileRow[]>([]);
+  const [profilesReady, setProfilesReady] = useState(false);
 
   const loadProfile = useCallback(async (userId: string, email?: string | null) => {
     const sb = createClient();
@@ -88,19 +90,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const loadAll = useCallback(async () => {
-    const sb = createClient();
-    const { data } = await sb.from("profiles").select("*").limit(200);
-    if (data) setAllProfiles(data as ProfileRow[]);
+    try {
+      const sb = createClient();
+      const { data } = await sb.from("profiles").select("*").limit(200);
+      if (data) setAllProfiles(data as ProfileRow[]);
+    } finally {
+      setProfilesReady(true);
+    }
   }, []);
 
   useEffect(() => {
-    if (!ready) return;
+    if (!ready) { setLoading(false); setProfilesReady(true); return; }
     const sb = createClient();
     sb.auth.getSession().then(async ({ data }) => {
       setUser(data.session?.user ?? null);
       if (data.session?.user) {
         await loadProfile(data.session.user.id, data.session.user.email);
         await loadAll();
+      } else {
+        setProfilesReady(true);
       }
       setLoading(false);
     });
@@ -149,11 +157,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const members = allProfiles.map(profileToMember);
     const currentMember = profile ? profileToMember(profile) : null;
     return {
-      ready, loading, user, profile, profiles: allProfiles, members, currentMember,
+      ready, loading, profilesReady, user, profile, profiles: allProfiles, members, currentMember,
       signIn, signUp, signOut,
       refreshProfile: async () => { if (user) await loadProfile(user.id, user.email); },
     };
-  }, [ready, loading, user, profile, allProfiles, signIn, signUp, signOut, loadProfile]);
+  }, [ready, loading, profilesReady, user, profile, allProfiles, signIn, signUp, signOut, loadProfile]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

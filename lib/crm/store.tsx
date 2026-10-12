@@ -119,9 +119,10 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
     }, 900);
   };
 
-  // Boot from Supabase on sign-in
+  // Boot from Supabase on sign-in (waits for the member directory so every
+  // id mapping is exact — no orphaned owners or notifications).
   useEffect(() => {
-    if (!remote || auth.loading) return;
+    if (!remote || auth.loading || !auth.profilesReady) return;
     if (remoteBooted) return;
     let cancelled = false;
     (async () => {
@@ -193,7 +194,7 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
     })();
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [remote, auth.loading, auth.user?.id, remoteBooted]);
+  }, [remote, auth.loading, auth.profilesReady, auth.user?.id, remoteBooted]);
 
   const value = useMemo<CrmContextValue>(() => {
     // Members = real Supabase profiles first, then local/seed directory.
