@@ -25,13 +25,40 @@ delete user), write path (insert + delete a canary `businesses` row), and user
 cleanup. Exit 0 = green. Before step 1, expect only the migration checks to fail —
 everything else already passes.
 
-## 3. Sign in
+## 3. Auth hooks — one-time setup so everything works together
 
-- `pnpm dev` → `/login` → **Create account** (starts as BDP) or **Sign in**.
-- The pre-existing `admin` profile (`info@mathengeinc.com`) signs in as **owner**.
-- Give someone a role: Dashboard → Table Editor → `profiles` → set `crm_role`
-  to `owner | admin | captain | bdp | sales`. (New signups default to `bdp`.)
-- Assign a captain: set `squads.captain_id` to their profile id.
+No public sign-up exists: accounts are created by you when contracts are signed.
+
+**A. URLs (Dashboard → Authentication → URL Configuration)**
+- Site URL: `https://crm.mathengeinc.com`
+- Additional Redirect URLs (one per line):
+  - `https://crm.mathengeinc.com/**`
+  - `https://crm-portal-blue.vercel.app/**`
+  - `http://localhost:3000/**`
+
+**B. Disable public sign-ups (Dashboard → Authentication → Providers → Email)**
+- Turn OFF "Allow new users to sign up". Sign-in, invites, and password resets keep working.
+
+**C. Email templates (Dashboard → Authentication → Email Templates)**
+- Paste the branded files from `supabase/email-templates/` into:
+  - "Invite user" ← `invite.html` (button → CRM set-password screen)
+  - "Reset password" ← `recovery.html`
+  - "Change email address" ← `email-change.html`
+- They point at the app's `/auth/callback` route, which completes the link and
+  lands the user on `/set-password` (first invite / reset) or `/` (email change).
+- Your SMTP sender stays as configured; these only change the design + links.
+
+**D. Giving someone access (when they sign their contract)**
+1. Dashboard → Authentication → Users → **Invite user** → their work email.
+   (They receive the branded invite and choose their password — no sign-up page.)
+2. Table Editor → `profiles` → find their row → set:
+   - `display_name` = full name (this is the BDP/captain name on every lead,
+     task, meeting and commission — keep it accurate),
+   - `crm_role` = `owner | admin | captain | bdp | sales`,
+   - `squad_id` = their squad's numeric id (from `squads`),
+   - `commission_rate` = e.g. `0.10` for BDPs.
+3. Done — they sign in at `https://crm.mathengeinc.com/login` and see exactly
+   what their role permits. Forgot-password works from the same screen.
 
 ## 4. How the data mapping works
 

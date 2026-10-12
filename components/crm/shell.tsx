@@ -50,7 +50,7 @@ export function CrmShell({ children }: { children: React.ReactNode }) {
           BDP CRM
         </span>
       </Link>
-      {/* Session: real Supabase user when authenticated, demo switcher otherwise */}
+      {/* Session card: signed-in user, otherwise demo switcher */}
       <div className="px-4 pb-4">
         {auth.user ? (
           <div className="rounded-xl border border-foreground/10 bg-card p-3">
@@ -59,7 +59,7 @@ export function CrmShell({ children }: { children: React.ReactNode }) {
             <p className="truncate font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{auth.user.email}</p>
             <div className="mt-2 flex items-center gap-2">
               <span className={`rounded-full px-2 py-0.5 font-mono text-[10px] uppercase ${remote ? "bg-green-600/15 text-green-800" : "bg-foreground/10 text-muted-foreground"}`}>
-                {remote ? `Supabase · ${syncStatus}` : "local"}
+                {remote ? `Live · ${syncStatus}` : "local"}
               </span>
               <button onClick={() => auth.signOut()} className="ml-auto flex items-center gap-1 rounded-full border border-foreground/15 px-2.5 py-1 text-xs hover:bg-foreground hover:text-background">
                 <LogOut className="h-3 w-3" /> Out

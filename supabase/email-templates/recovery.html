@@ -1,0 +1,14 @@
+<!doctype html><html><body style="margin:0;padding:0;background:#f4f2ed;font-family:Georgia,'Times New Roman',serif;color:#1c1a16">
+  <!-- INSTALL: Supabase Dashboard → Authentication → Email Templates → "Reset password" → paste this entire file. -->
+  <div style="max-width:600px;margin:0 auto;padding:32px 20px">
+    <p style="font-family:Menlo,Consolas,monospace;font-size:11px;letter-spacing:3px;color:#8a867c;margin:0 0 8px">MATHENGE INC. · BDP CRM</p>
+    <img src="https://crm.mathengeinc.com/logo.png" alt="Mathenge Inc" width="120" style="display:block;margin:0 0 20px"/>
+    <div style="background:#fffdf9;border:1px solid #e7e2d6;border-radius:14px;padding:32px">
+      <h1 style="font-size:30px;font-weight:400;line-height:1.15;margin:0 0 16px">Reset your password</h1>
+      <p style="font-size:15px;line-height:1.75;margin:0 0 12px">Someone asked to reset the password for {{ .Email }}. If that was you, tap below to choose a new one.</p>
+      <p style="font-size:15px;line-height:1.75;margin:0">This link expires in one hour. If it wasn't you, ignore this email.</p>
+      <a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=recovery&next=/set-password" style="display:inline-block;margin-top:24px;background:#1c1a16;color:#faf9f7;text-decoration:none;font-family:Arial,sans-serif;font-size:14px;padding:12px 28px;border-radius:999px">Choose a new password</a>
+    </div>
+    <p style="font-family:Arial,sans-serif;font-size:12px;color:#8a867c;margin:20px 0 0">Nairobi, Kenya · Dubai, UAE · info@mathengeinc.com</p>
+  </div>
+</body></html>

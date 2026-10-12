@@ -76,7 +76,7 @@ function CommsInner() {
       });
       const j = await r.json();
       setResult(r.ok
-        ? `Sent — ${j.notified} notified in-app${email ? (j.emailQueued ? " · email queued (Resend not configured)" : ` · ${j.emailed} emailed`) : ""}.`
+        ? `Sent — ${j.notified} notified in-app${email ? (j.emailQueued ? " · email queued (connect email sending to deliver it)" : ` · ${j.emailed} emailed`) : ""}.`
         : `Failed — ${j.error}`);
       if (r.ok) { setSubject(""); setMessage(""); }
     } catch { setResult("Failed — network error."); }
@@ -102,7 +102,7 @@ function CommsInner() {
       <PageHead
         eyebrow="Comms hub · announcements, meetings, custom email"
         title="Broadcast to the network"
-        sub={status ? (status.resendConfigured ? `Email live via Resend (${status.from}). In-app notifications always send.` : "In-app notifications send now — email queues until a Resend key is added.") : "Loading send status…"}
+        sub={status ? (status.resendConfigured ? "Email is connected — broadcasts also go out by email. In-app notifications always send." : "In-app notifications send now — email delivers once sending is connected.") : "Loading send status…"}
       />
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="rounded-xl lg:col-span-2">
