@@ -157,7 +157,6 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
             const ids = new Set(base.map((r) => r.id));
             return [...base, ...localRows.filter((r) => !ids.has(r.id))];
           };
-          const local = stateRef.current;
           const merged: CrmState = {
             ...local,
             cohorts: partial.cohorts?.length ? partial.cohorts : local.cohorts,
