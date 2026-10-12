@@ -5,11 +5,17 @@ import { PageHead } from "@/components/crm/ui";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-function Step({ n, title, body }: { n: string; title: string; body: string }) {
+const APP = "https://crm.mathengeinc.com";
+
+function Step({ n, title, body, link }: { n: string; title: string; body: string; link?: [string, string] }) {
   return (
     <div className="flex gap-4 rounded-xl border border-foreground/10 px-4 py-3.5">
       <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-foreground font-display text-sm text-background">{n}</span>
-      <div><p className="text-sm font-medium">{title}</p><p className="mt-0.5 text-[13px] leading-relaxed text-muted-foreground">{body}</p></div>
+      <div className="min-w-0">
+        <p className="text-sm font-medium">{title}</p>
+        <p className="mt-0.5 text-[13px] leading-relaxed text-muted-foreground">{body}</p>
+        {link && <a href={link[0]} className="mt-1.5 inline-block rounded-full border border-foreground/15 px-3.5 py-1.5 text-[13px] font-medium hover:bg-foreground hover:text-background">Open: {link[1]}</a>}
+      </div>
     </div>
   );
 }
@@ -26,15 +32,16 @@ function Chapter({ id, eyebrow, title, children }: { id: string; eyebrow: string
 
 const CONTENTS: [string, string][] = [
   ["start", "1 · Your first day"],
-  ["register", "2 · Register a lead in 60 seconds"],
-  ["log", "3 · Log anything in 30 seconds"],
-  ["followups", "4 · Follow-ups — your promise keeper"],
-  ["meetings", "5 · Meetings"],
-  ["money", "6 · Pipeline & your earnings"],
-  ["toolkit", "7 · Campaigns, files & messages"],
-  ["measured", "8 · How you're measured"],
-  ["rules", "9 · Rules of the road"],
-  ["faq", "10 · Quick answers"],
+  ["home", "2 · Your home screen"],
+  ["register", "3 · Add a lead in 60 seconds"],
+  ["log", "4 · Record your work in 30 seconds"],
+  ["followups", "5 · Never miss a follow-up"],
+  ["meetings", "6 · Meetings"],
+  ["money", "7 · Your pipeline & pay"],
+  ["toolkit", "8 · What to sell & where files live"],
+  ["measured", "9 · How you're measured"],
+  ["rules", "10 · Rules of the road"],
+  ["faq", "11 · Quick answers"],
 ];
 
 export default function GuidePage() {
@@ -43,8 +50,8 @@ export default function GuidePage() {
       <PageHead
         eyebrow="BDP handbook · read once, then work"
         title="Your guide to winning"
-        sub="Everything a Business Development Partner needs: finding leads, logging work from your phone, getting paid. Nothing here is paperwork for its own sake — every step moves a deal forward."
-        action={<Button asChild className="rounded-full bg-foreground text-background"><Link href="/leads?new=1">+ Register your first lead</Link></Button>}
+        sub="Welcome to the sales team. This page teaches you the system: finding businesses, recording your work from your phone, and getting paid. Every blue button below opens the exact screen it talks about."
+        action={<Button asChild className="rounded-full bg-foreground text-background"><a href={`${APP}/leads?new=1`}>+ Add your first lead</a></Button>}
       />
       <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
         <aside className="hidden lg:block">
@@ -64,110 +71,95 @@ export default function GuidePage() {
               ))}
             </nav>
           </details>
+
           <Link href="/guide/field-manual" className="block rounded-2xl border border-foreground bg-foreground p-6 text-background transition-transform hover:-translate-y-0.5 sm:p-8">
             <p className="font-mono text-[11px] uppercase tracking-widest opacity-70">The full playbook · 25 chapters + scripts</p>
             <p className="mt-1 font-display text-3xl tracking-tight sm:text-4xl">BDP Field Guide →</p>
-            <p className="mt-2 max-w-xl text-sm opacity-80">Signals, industry maps, every email/WhatsApp/call script, objections, follow-up sequences, scorecards — copy-ready for the field. Keep it open on your phone.</p>
+            <p className="mt-2 max-w-xl text-sm opacity-80">Signals, industry maps, every email, WhatsApp and call script, answers to objections, follow-up wordings — ready to copy. Keep it open on your phone. ({APP}/guide/field-manual)</p>
           </Link>
+
           <Chapter id="start" eyebrow="Chapter 1" title="Your first day">
-            <Step n="1" title="Open your invite email" body="Tap the button, confirm it's you, and choose your password. The link lasts 24 hours — ask your captain for a fresh one if it expires." />
-            <Step n="2" title="Sign in at crm.mathengeinc.com" body="Use your work email. Forgot it later? Tap “Forgot password?” on the sign-in screen." />
-            <Step n="3" title="Look at My workspace" body="Four numbers: your leads, follow-ups due, active opportunities, meetings booked. Below them, Today's priorities tells you exactly what to do first. Start there every morning." />
+            <Step n="1" title="Open your invite email" body="Tap the button inside, confirm it's you, and choose your password. The link lasts 24 hours — ask your captain for a fresh invite if it runs out." />
+            <Step n="2" title="Sign in" body="Use your work email and the password you just chose. If you ever forget it, the sign-in screen has a “Forgot password?” link that emails you a reset." link={[`${APP}/login`, "Sign-in screen"]} />
+            <Step n="3" title="Say hello to your home screen" body="It shows your numbers and exactly what to do first. Open it every morning before anything else." link={[`${APP}/`, "My workspace"]} />
           </Chapter>
 
-          <Chapter id="register" eyebrow="Chapter 2" title="Register a lead in 60 seconds">
-            <Card className="rounded-xl"><CardContent className="space-y-2 px-5 py-4 text-sm">
-              <p>A <strong>lead</strong> is any business that could buy from us. Tap <strong>+ Register lead</strong> and fill only six things:</p>
-              <ol className="list-decimal space-y-1.5 pl-5 text-muted-foreground">
-                <li><strong className="text-foreground">Business name</strong> — exact name on the signboard or receipt.</li>
-                <li><strong className="text-foreground">Website or identifier</strong> — website, Instagram, or “walk-in, Moi Avenue”.</li>
-                <li><strong className="text-foreground">Contact</strong> — who you spoke to and their role. “Unknown yet” is fine.</li>
-                <li><strong className="text-foreground">Industry</strong> — shop, restaurant, distributor, school…</li>
-                <li><strong className="text-foreground">Observed problem</strong> — what you SAW, not guessed. “Paper order book, 3 missed calls while I waited.”</li>
-                <li><strong className="text-foreground">Source</strong> — where you found them.</li>
-              </ol>
-              <p className="rounded-xl bg-red-600/10 px-4 py-2.5 text-[13px] text-red-800">If the screen warns the business is already in our records — STOP. It shows who owns it and whether we already contacted them. Never pitch a business another BDP owns.</p>
-              <p>Missing details? <strong>Save draft</strong> and complete it after your next visit. A draft still counts as yours.</p>
-            </CardContent></Card>
+          <Chapter id="home" eyebrow="Chapter 2" title="Your home screen">
+            <Step n="1" title="Four numbers" body="My leads (every business you're working on), Follow-ups due (promises with dates), Active opportunities (leads the closing team is working, with you attached), Meetings booked (what's coming)." link={[`${APP}/`, "My workspace"]} />
+            <Step n="2" title="Today's priorities" body="The most urgent things, top first. Tap any of them — it opens the right business so you can act in seconds." />
           </Chapter>
 
-          <Chapter id="log" eyebrow="Chapter 3" title="Log anything in 30 seconds">
-            <Card className="rounded-xl"><CardContent className="space-y-2 px-5 py-4 text-sm">
-              <p>Open any lead and tap one quick action — then add only the next step and its date:</p>
-              <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
-                {[
-                  ["No answer", "Tried calling, no pickup. Set when to try again."],
-                  ["Replied", "They responded. Note what they said."],
-                  ["Interested", "They want more — this can qualify the lead."],
-                  ["Meeting booked", "Date set — it appears under Meetings."],
-                  ["Follow up later", "Not now — pick the exact return date."],
-                  ["Not interested", "Record why. A clean no beats a silent maybe."],
-                ].map(([k, v]) => (
-                  <div key={k} className="rounded-xl border border-foreground/10 px-3 py-2"><p className="font-medium">{k}</p><p className="text-xs text-muted-foreground">{v}</p></div>
-                ))}
-              </div>
-              <p><strong>Golden rule: no lead ever sits without a next step and a date.</strong> The system will chase you when one goes overdue — and then it tells your captain.</p>
-            </CardContent></Card>
+          <Chapter id="register" eyebrow="Chapter 3" title="Add a lead in 60 seconds">
+            <Step n="1" title="A lead is any business that could buy from us" body="Tap the button below. You only need six things: the business name, a website or something that identifies it (Instagram, street, landmark), who you spoke to, the industry, the problem you SAW with your own eyes, and where you found them." link={[`${APP}/leads?new=1`, "Add a lead"]} />
+            <Step n="2" title="Write what you saw, not what you guess" body="Good: “Paper order book, three missed calls while I waited.” Weak: “Might need a website.” The closing team can only work with what you actually observed." />
+            <Step n="3" title="Red warning? Stop." body="If the screen says the business is already in our records, it will show you who owns it and whether we've contacted them before. Never pitch a business another partner owns — hand it over instead." />
+            <Step n="4" title="Missing details? Save a draft." body="A draft keeps the business yours while you go back for the rest. Your list lives here:" link={[`${APP}/leads`, "My leads"]} />
           </Chapter>
 
-          <Chapter id="followups" eyebrow="Chapter 4" title="Follow-ups — your promise keeper">
-            <Step n="1" title="Work the Tasks page top-down" body="Overdue first, always. Each task links straight to its lead — one tap and you're logging." />
-            <Step n="2" title="Tap Done the moment it's done" body="Don't batch your updates at night. A 30-second log right after the call keeps every record true." />
-            <Step n="3" title="Stuck? Say so" body="If a lead won't move, write what's blocking you in the next action. Your captain's job is unblocking — give them something to work with." />
+          <Chapter id="log" eyebrow="Chapter 4" title="Record your work in 30 seconds">
+            <Step n="1" title="Open the business, tap one outcome" body="No answer, Replied, Interested, Meeting booked, Follow up later, Not interested. Then write the next step and its date — that part is required." link={[`${APP}/leads`, "My leads"]} />
+            <Step n="2" title="No business sits still" body="Every lead must always have a next step with a date. If one goes overdue, the system reminds you — and then it tells your captain. Do it right after the call, from your phone, while it's fresh." />
           </Chapter>
 
-          <Chapter id="meetings" eyebrow="Chapter 5" title="Meetings">
-            <Step n="1" title="Prepare in 5 minutes" body="Re-read the lead: problem, decision-maker, last outcome. Open the Campaigns page for the right demo and one-pager." />
-            <Step n="2" title="Record the outcome the same day" body="Meetings → your meeting → Record outcome. What was agreed, and the next step with a date. A meeting without a recorded outcome didn't happen as far as the business is concerned." />
+          <Chapter id="followups" eyebrow="Chapter 5" title="Never miss a follow-up">
+            <Step n="1" title="Work this list top-down" body="Overdue first, always. Each task opens its business with one tap." link={[`${APP}/tasks`, "My tasks"]} />
+            <Step n="2" title="Tap Done the moment it's done" body="Don't save updates for the evening. Thirty seconds now keeps every record true." />
+            <Step n="3" title="Stuck? Write what's blocking you" body="“Waiting on the MD, back Thursday” gives your captain something to unblock. Silence gives them nothing." />
           </Chapter>
 
-          <Chapter id="money" eyebrow="Chapter 6" title="Pipeline & your earnings">
-            <Card className="rounded-xl"><CardContent className="space-y-2 px-5 py-4 text-sm">
-              <p>When a lead is genuinely interested — real problem, named decision-maker, urgency — mark it <strong>Interested & qualify</strong>. It moves to the pipeline and the closing team takes it from there. <strong>You stay attached to it forever:</strong> the commission is yours when it pays.</p>
-              <p>Track everything under <strong>My earnings</strong>: eligible revenue, earned commission, what's awaiting approval, what's paid. Commission is calculated automatically when the client's payment lands — per the rate on your profile. If a number looks wrong, ask your captain before payday, not after.</p>
-            </CardContent></Card>
+          <Chapter id="meetings" eyebrow="Chapter 6" title="Meetings">
+            <Step n="1" title="Prepare in five minutes" body="Re-read the business: the problem, the decision-maker, what happened last time. Grab the right demo from the campaigns page." link={[`${APP}/campaigns`, "Campaigns & offers"]} />
+            <Step n="2" title="Record the outcome the same day" body="Open the meeting, tap Record outcome, write what was agreed and the next step with a date. A meeting without a recorded outcome counts for nothing." link={[`${APP}/meetings`, "My meetings"]} />
           </Chapter>
 
-          <Chapter id="toolkit" eyebrow="Chapter 7" title="Campaigns, files & messages">
-            <Step n="1" title="Campaigns page before outreach" body="Current offers, who they're for, message templates you can copy, and the qualification checklist. Never freelance the pricing — use the approved offers." />
-            <Step n="2" title="Files page for everything shared" body="Price lists, decks, playbooks — download anytime. If your captain uploads something new, you'll be notified." />
-            <Step n="3" title="Watch your notifications" body="Announcements, meeting notices and new resources arrive in-app (bell, top right) and by email. Read them — they often change what you're selling that week." />
+          <Chapter id="money" eyebrow="Chapter 7" title="Your pipeline & pay">
+            <Step n="1" title="Real interest? Qualify it." body="Genuine problem, named decision-maker, some urgency — tap “Interested & qualify” on the business. It moves to the pipeline and the closing team takes over." link={[`${APP}/pipeline`, "Opportunities"]} />
+            <Step n="2" title="You stay attached — and paid" body="The commission stays yours when the deal pays out. Watch it all here: what you've earned, what's waiting for approval, what's been paid. If a number looks wrong, ask your captain before payday, not after." link={[`${APP}/deals`, "My earnings"]} />
           </Chapter>
 
-          <Chapter id="measured" eyebrow="Chapter 8" title="How you're measured">
+          <Chapter id="toolkit" eyebrow="Chapter 8" title="What to sell & where files live">
+            <Step n="1" title="Check campaigns before you pitch" body="Current offers, who they're for, messages you can copy word-for-word, and the checklist for a good lead. Never invent prices — use what's approved here." link={[`${APP}/campaigns`, "Campaigns & offers"]} />
+            <Step n="2" title="Files live in one shared place" body="Price lists, decks, playbooks — download anytime. When your captain shares something new, you get a notification." link={[`${APP}/files`, "Files & resources"]} />
+            <Step n="3" title="Read your messages" body="Announcements, meeting notices and new files arrive as notifications (the bell, top right) and by email. They often change what you're selling that week." />
+          </Chapter>
+
+          <Chapter id="measured" eyebrow="Chapter 9" title="How you're measured">
             <Card className="rounded-xl"><CardContent className="px-5 py-4 text-sm">
-              <p><strong>Quality beats volume.</strong> Flooding the system with weak leads hurts your score — duplicates and low-quality entries are filtered at review. What counts:</p>
+              <p><strong>Quality beats volume.</strong> Flooding the system with weak businesses hurts your score — duplicates get filtered. What counts:</p>
               <ul className="mt-2 list-disc space-y-1 pl-5 text-muted-foreground">
-                <li>Qualified leads accepted — did your leads hold up?</li>
-                <li>Real conversations — replies and interest, not dials.</li>
-                <li>Meetings held and pipeline value created.</li>
+                <li>Good leads that get accepted — did your businesses hold up?</li>
+                <li>Real conversations — replies and interest, not just dials.</li>
+                <li>Meetings held and value created in the pipeline.</li>
                 <li>Cash collected — the number that pays everyone.</li>
-                <li>Follow-up completion — did you do what you said, when you said?</li>
-                <li>Record quality — can the business trust your updates?</li>
+                <li>Keeping your promises — did you do what you said, when you said?</li>
+                <li>Clean records — can the business trust your updates?</li>
               </ul>
             </CardContent></Card>
           </Chapter>
 
-          <Chapter id="rules" eyebrow="Chapter 9" title="Rules of the road">
-            <Step n="1" title="The CRM is the truth" body="WhatsApp is for coordinating. Ownership, updates, meeting outcomes and money live HERE. If it isn't in the CRM, it didn't happen." />
-            <Step n="2" title="One owner per lead" body="Never work a lead owned by someone else. Flag duplicates instead of re-registering." />
-            <Step n="3" title="Phones first" body="Everything works on your phone. Log from the field — large buttons, minimal typing, under a minute." />
-            <Step n="4" title="Ask early" body="Captain for stuck leads, admin for access and disputes. Silence is the only real failure." />
+          <Chapter id="rules" eyebrow="Chapter 10" title="Rules of the road">
+            <Step n="1" title="If it isn't written here, it didn't happen" body="WhatsApp is for coordinating. Ownership, updates, meeting results and money live in this system." />
+            <Step n="2" title="One owner per business" body="Never work a business owned by someone else. Flag duplicates instead of adding them again." />
+            <Step n="3" title="Your phone is your office" body="Everything here is built for phones — big buttons, minimal typing, under a minute. Log from the field." />
+            <Step n="4" title="Ask early" body="Captain for stuck businesses, admin for access problems. Silence is the only real failure." />
           </Chapter>
 
-          <Chapter id="faq" eyebrow="Chapter 10" title="Quick answers">
+          <Chapter id="faq" eyebrow="Chapter 11" title="Quick answers">
             <Card className="rounded-xl">
               <CardHeader><CardTitle className="font-display text-xl">FAQ</CardTitle></CardHeader>
               <CardContent className="space-y-2.5 px-6 pb-6 text-sm">
                 {[
-                  ["I can't sign in.", "Use “Forgot password?” on the sign-in page. Still stuck? Your captain or admin will sort you out — accounts are created by them, never by you."],
-                  ["My invite link expired.", "Links last 24 hours. Ask your captain for a fresh invite."],
-                  ["The business says someone already contacted them.", "Stop pitching. Check the duplicate warning — it names the owner. Hand it over with a note."],
-                  ["I registered the wrong business.", "Log it honestly on the lead (“wrong entry — please reject”) and register the right one. Don't leave bad data."],
-                  ["I'm leaving / a lead must move to someone else.", "Tell your captain. Transfers keep the FULL history — nothing is lost."],
-                  ["When do I get paid?", "When the client's payment is verified, commission is calculated automatically. Watch My earnings; approved amounts are paid out on the normal cycle."],
-                ].map(([q, a]) => (
-                  <div key={q} className="rounded-xl bg-foreground/5 px-4 py-3"><p className="font-medium">{q}</p><p className="mt-0.5 text-muted-foreground">{a}</p></div>
+                  ["I can't sign in.", "Use “Forgot password?” on the sign-in screen. Still stuck? Your captain or admin will sort you out — accounts are created by them, never by you.", `${APP}/forgot-password`, "Reset password"],
+                  ["My invite link expired.", "Links last 24 hours. Ask your captain for a fresh invite.", null, null],
+                  ["The business says someone already contacted them.", "Stop pitching. The warning on the screen names the owner — hand the business over with a note.", `${APP}/leads`, "My leads"],
+                  ["I added the wrong business.", "Write an honest note on it (“wrong entry — please reject”) and add the right one. Don't leave bad data behind.", null, null],
+                  ["I'm leaving, or a business must move to someone else.", "Tell your captain. Transfers keep the FULL history — nothing is lost.", null, null],
+                  ["When do I get paid?", "When the client's payment is confirmed, your commission is calculated automatically. Watch it here:", `${APP}/deals`, "My earnings"],
+                ].map(([q, a, href, label]) => (
+                  <div key={q as string} className="rounded-xl bg-foreground/5 px-4 py-3">
+                    <p className="font-medium">{q}</p>
+                    <p className="mt-0.5 text-muted-foreground">{a} {href && <a href={href as string} className="font-medium text-foreground underline underline-offset-4">{label}</a>}</p>
+                  </div>
                 ))}
               </CardContent>
             </Card>
@@ -176,7 +168,10 @@ export default function GuidePage() {
           <div className="flex flex-col items-center gap-3 rounded-2xl border border-foreground/10 bg-card p-8 text-center">
             <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">The whole job, in one line</p>
             <p className="font-display text-3xl">Every lead has an owner. Every action has a next step.</p>
-            <Button asChild className="rounded-full bg-foreground text-background"><Link href="/leads?new=1">Go register a lead</Link></Button>
+            <div className="flex flex-wrap justify-center gap-2">
+              <Button asChild className="rounded-full bg-foreground text-background"><a href={`${APP}/leads?new=1`}>Add a lead</a></Button>
+              <Button asChild variant="outline" className="rounded-full"><a href={`${APP}/guide/field-manual`}>Open the Field Guide</a></Button>
+            </div>
           </div>
         </div>
       </div>
