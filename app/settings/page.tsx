@@ -4,8 +4,17 @@ import { PageHead } from "@/components/crm/ui";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PERMISSIONS } from "@/lib/crm/permissions";
+import { Gate } from "@/components/crm/gate";
 
 export default function SettingsPage() {
+  return (
+    <Gate roles={["owner", "admin"]}>
+      <SettingsInner />
+    </Gate>
+  );
+}
+
+function SettingsInner() {
   const s = useCrm();
   const isOwner = s.currentUser.role === "owner";
 

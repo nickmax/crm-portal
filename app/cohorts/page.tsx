@@ -4,8 +4,17 @@ import { scorecard } from "@/lib/crm/insights";
 import { PageHead } from "@/components/crm/ui";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Gate } from "@/components/crm/gate";
 
 export default function CohortsPage() {
+  return (
+    <Gate roles={["owner", "admin", "captain"]}>
+      <CohortsInner />
+    </Gate>
+  );
+}
+
+function CohortsInner() {
   const s = useCrm();
   const rows = scorecard(s);
   return (

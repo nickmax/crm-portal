@@ -3,8 +3,17 @@ import { useCrm, fmtKES } from "@/lib/crm/store";
 import { computeExceptions, scorecard, companyName } from "@/lib/crm/insights";
 import { PageHead } from "@/components/crm/ui";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Gate } from "@/components/crm/gate";
 
 export default function ReportsPage() {
+  return (
+    <Gate roles={["owner", "admin", "captain"]}>
+      <ReportsInner />
+    </Gate>
+  );
+}
+
+function ReportsInner() {
   const s = useCrm();
   const exceptions = computeExceptions(s);
   const rows = scorecard(s);
