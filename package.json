@@ -8,7 +8,8 @@
     "lint": "eslint .",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "verify:supabase": "node scripts/verify-supabase.mjs"
+    "verify:supabase": "node scripts/verify-supabase.mjs",
+    "verify:sync": "tsx scripts/verify-app-sync.mts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
