@@ -46,7 +46,18 @@ export function CrmShell({ children }: { children: React.ReactNode }) {
 
   // Public auth routes render without the shell or the sign-in gate —
   // they must work with NO session (invite links, resets, new passwords).
-  if (!mounted) return <div className="min-h-screen" />;
+  // (Shell chrome itself renders post-mount — see below.)
+  if (!mounted) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-6">
+        <span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Mathenge Inc. · BDP CRM</span>
+        <span className="font-display text-2xl">Opening your workspace…</span>
+        <div className="h-1.5 w-40 overflow-hidden rounded-full bg-foreground/10">
+          <div className="h-full w-1/2 rounded-full bg-foreground/60 marquee" />
+        </div>
+      </div>
+    );
+  }
   if (isPublicAuthRoute(pathname)) return <>{children}</>;
 
   const nav = NAV_BY_ROLE[currentUser.role] ?? NAV_BY_ROLE.bdp;
