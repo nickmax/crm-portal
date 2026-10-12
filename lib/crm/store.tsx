@@ -74,6 +74,15 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
 
   const remote = isSupabaseConfigured() && !!auth.user;
 
+  // Single source of truth for "who is acting": when signed in, every write
+  // (ownerId, actorId, assignee) must carry the authenticated member — never a
+  // stale id left in storage by another session or the demo default.
+  useEffect(() => {
+    if (auth.loading || !auth.currentMember) return;
+    const id = auth.currentMember.id;
+    setState((s) => (s.currentUserId === id ? s : { ...s, currentUserId: id }));
+  }, [auth.loading, auth.currentMember]);
+
   // Persist locally (offline fallback + instant reloads)
   useEffect(() => {
     try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {}
