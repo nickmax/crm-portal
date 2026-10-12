@@ -50,7 +50,7 @@ export function profileToMember(p: ProfileRow): Member {
         ? (p.crm_role as Role)
         : (LEGACY_ROLE_MAP[p.role ?? ""] ?? "bdp");
   return {
-    id: p.app_ref ?? `sb-${p.id.slice(0, 8)}`,
+    id: p.app_ref ?? p.id,
     name: p.display_name ?? p.email ?? "Team member",
     email: p.email ?? "",
     role,

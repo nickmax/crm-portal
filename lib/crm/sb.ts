@@ -15,8 +15,7 @@ import type { ProfileRow } from "./auth";
 // - Meeting <-> meetings via crm_ref.  Opportunity <-> deals via crm_ref.
 // - Won/lost Deal reuses its opportunity's deals row (crm_kind flips to 'deal').
 // - Activity <-> lead_events. Audit <-> audit_log. Notification <-> notifications.
-// - App member ids of real users are `sb-<8>`; profile uuid resolution comes
-//   from the profiles list passed into pushDiff.
+// - App member ids of real users are their profile uuids (app_ref wins when set).
 // Never deletes remote rows. Missing (pre-migration) tables are skipped.
 // ---------------------------------------------------------------------------
 
@@ -99,7 +98,7 @@ export async function fetchCrmState(
 ): Promise<{ partial: Partial<CrmState>; ctx: SbCtx }> {
   const ctx = emptyCtx();
   for (const p of profiles) {
-    const memberId = p.app_ref ?? `sb-${p.id.slice(0, 8)}`;
+    const memberId = p.app_ref ?? p.id;
     ctx.profileUuidByMember.set(memberId, p.id);
   }
   const partial: Partial<CrmState> = {};
@@ -137,7 +136,7 @@ export async function fetchCrmState(
         id: r.app_ref ?? `sq-${r.id}`,
         name: r.name,
         cohortId: (r.cohort_id != null && cohortApp.get(r.cohort_id)) || seedCohorts[0]?.id || "co-2026-q1",
-        captainId: r.captain_id ? `sb-${String(r.captain_id).slice(0, 8)}` : "",
+        captainId: r.captain_id ? String(r.captain_id ?? "") : "",
         industry: r.industry ?? "",
         target: r.target ?? 30,
       } as Squad));
@@ -429,7 +428,7 @@ export async function fetchCrmState(
 function memberIdForProfile(profileUuid: string | null | undefined, profiles: ProfileRow[]): string | null {
   if (!profileUuid) return null;
   const p = profiles.find((x) => x.id === profileUuid);
-  return p ? (p.app_ref ?? `sb-${p.id.slice(0, 8)}`) : null;
+  return p ? (p.app_ref ?? p.id) : null;
 }
 function profileMemberId(profileUuid: string | null | undefined, profiles: ProfileRow[]): string | null {
   return memberIdForProfile(profileUuid, profiles);
@@ -468,7 +467,7 @@ export async function pushDiff(
   const errors: string[] = [];
   if (!ctx.tables.core) return { ok: false, errors: ["core tables unavailable"], seeded: false };
   for (const p of profiles) {
-    const memberId = p.app_ref ?? `sb-${p.id.slice(0, 8)}`;
+    const memberId = p.app_ref ?? p.id;
     ctx.profileUuidByMember.set(memberId, p.id);
   }
   const bizIdForCompany = (companyId: string) => ctx.businessIdByLegacy.get(companyId);
