@@ -89,10 +89,20 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
       const next = stateRef.current;
       if (!prev) return;
       try {
+        // Never push anonymously: RLS tables (e.g. lead_events) reject it and
+        // the rows would be wrongly treated as synced. Just wait for the next
+        // mutate — all push ops are idempotent, so a retry is always safe.
+        const { data: { session } } = await sb.auth.getSession();
+        if (!session) return;
         const res = await pushDiff(sb, prev, next, ctxRef.current, profilesRef.current);
-        lastPushedRef.current = next;
-        if (res.ok) { setSyncStatus("synced"); setSyncError(null); }
-        else { setSyncStatus("error"); setSyncError(res.errors.slice(0, 3).join(" · ")); }
+        if (res.ok) {
+          lastPushedRef.current = next;
+          setSyncStatus("synced"); setSyncError(null);
+        } else {
+          // Keep lastPushed where it was: the next push retries everything,
+          // and every op is idempotent (unique refs + pushed-id sets).
+          setSyncStatus("error"); setSyncError(res.errors.slice(0, 3).join(" · "));
+        }
       } catch (e) {
         setSyncStatus("error");
         setSyncError(e instanceof Error ? e.message.slice(0, 200) : "Sync failed");

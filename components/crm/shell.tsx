@@ -33,6 +33,11 @@ export function CrmShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  // Seed data contains relative timestamps evaluated at module load, which
+  // differ between server prerender and client hydration (React #418).
+  // This is a signed-in app, so render shell chrome only after mount.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     if (isPublicAuthRoute(pathname)) return;
@@ -41,6 +46,7 @@ export function CrmShell({ children }: { children: React.ReactNode }) {
 
   // Public auth routes render without the shell or the sign-in gate —
   // they must work with NO session (invite links, resets, new passwords).
+  if (!mounted) return <div className="min-h-screen" />;
   if (isPublicAuthRoute(pathname)) return <>{children}</>;
 
   const nav = NAV_BY_ROLE[currentUser.role] ?? NAV_BY_ROLE.bdp;
