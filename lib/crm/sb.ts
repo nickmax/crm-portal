@@ -77,8 +77,12 @@ function isMissingTableError(e: unknown): boolean {
   return /PGRST205|404|does not exist|schema cache/i.test(msg);
 }
 
-async function safeSelect<T>(sb: SupabaseClient, table: string, query: string): Promise<{ rows: T[]; available: boolean }> {
-  const { data, error } = await sb.from(table).select(query);
+async function safeSelect<T>(sb: SupabaseClient, table: string, query: string, onlyCrmLeads = false): Promise<{ rows: T[]; available: boolean }> {
+  let q = sb.from(table).select(query);
+  // The discovery table holds tens of thousands of pipeline businesses.
+  // Only rows the CRM has claimed (crm_lead_ref set) are leads.
+  if (onlyCrmLeads) q = q.not("crm_lead_ref", "is", null);
+  const { data, error } = await q;
   if (error) {
     if (isMissingTableError(error)) return { rows: [], available: false };
     throw error;
@@ -144,7 +148,8 @@ export async function fetchCrmState(
   // CRM businesses only (keeps the 29k-row discovery table out of memory)
   const { rows: bizRows, available: coreAvailable } = await safeSelect<Row>(
     sb, "businesses",
-    "id,legacy_place_id,name,website,phone_e164,industry,country,owner,sales_stage,lead_score,follow_up_due_at,crm_lead_ref,crm_squad_id,crm_status,crm_next_action,crm_source,crm_value_cents,crm_urgency,crm_decision_maker,crm_evidence,updated_at,created_at"
+    "id,legacy_place_id,name,website,phone_e164,industry,country,owner,sales_stage,lead_score,follow_up_due_at,crm_lead_ref,crm_squad_id,crm_status,crm_next_action,crm_source,crm_value_cents,crm_urgency,crm_decision_maker,crm_evidence,updated_at,created_at",
+    true
   ).catch(() => ({ rows: [] as Row[], available: false }));
   ctx.tables.core = coreAvailable;
   if (!coreAvailable) return { partial, ctx };

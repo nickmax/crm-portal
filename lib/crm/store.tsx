@@ -117,10 +117,19 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
         const local = stateRef.current;
         const hasRemoteLeads = (partial.leads?.length ?? 0) > 0;
         if (!hasRemoteLeads) {
-          // Fresh backend: push local/seed demo data once, keep using it.
-          const res = await seedRemoteIfEmpty(sb, local, ctx, auth.profiles);
+          // Fresh backend: no CRM rows exist anywhere, so local data slices can
+          // only be demo seed or unclaimed discovery rows — start clean from
+          // seed and push that (never push unfiltered discovery data).
+          const fresh = initial();
+          const clean: CrmState = {
+            ...fresh,
+            members: local.members,
+            currentUserId: local.currentUserId,
+          };
+          setState(clean);
+          const res = await seedRemoteIfEmpty(sb, clean, ctx, auth.profiles);
           if (!res.ok) throw new Error(res.errors.slice(0, 3).join(" · ") || "Seed push failed");
-          lastPushedRef.current = local;
+          lastPushedRef.current = clean;
           setSyncStatus("synced");
         } else {
           // Adopt remote as truth (per-slice fallback to local when empty).
