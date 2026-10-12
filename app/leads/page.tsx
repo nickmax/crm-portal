@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Suspense, useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useCrm, uid, fmtKES, audit, findDuplicates, isOverdue } from "@/lib/crm/store";
 import { visibleLeads } from "@/lib/crm/permissions";
 import { PageHead, LeadBadge, Empty } from "@/components/crm/ui";
@@ -27,11 +27,17 @@ export default function LeadsPage() {
 }
 
 function LeadsInner() {
-  const s = useCrm();
   const params = useSearchParams();
+  const router = useRouter();
+  const s = useCrm();
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("All");
   const [showNew, setShowNew] = useState(params.get("new") === "1");
+
+  const closeNew = () => {
+    setShowNew(false);
+    router.replace("/leads"); // drop ?new=1 so a remount never reopens the form
+  };
 
   const rows = useMemo(() => {
     let list = visibleLeads(s.leads, s.currentUser);
