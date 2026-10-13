@@ -149,11 +149,14 @@ function ClearDemo() {
     try {
       const r = await fetch("/api/team/clear-demo", { method: "DELETE" });
       const j = await r.json();
+      // Always clear what's on screen: the sample data you see lives on this
+      // device too, and the point of this button is to stop seeing it.
+      clearDemo();
       if (r.ok) {
-        clearDemo();
         const n = Object.values(j.removed as Record<string, number>).reduce((a, b) => a + b, 0);
-        setMsg(`Done — ${n} demo rows removed everywhere. The system is clean.`);
-      } else setMsg(`Failed — ${j.error}`);
+        const left = Object.keys(j.skipped as Record<string, string> ?? {});
+        setMsg(`Done — ${n} demo rows removed everywhere. The system is clean.${left.length ? ` Still stuck: ${left.join(", ")} — use the SQL in supabase/remove-seed-data.sql.` : ""}`);
+      } else setMsg(`Server clear failed — ${j.error} Your screen was still cleared; run supabase/remove-seed-data.sql for the server copy.`);
     } catch { setMsg("Network error — try again."); }
     setBusy(false);
   };

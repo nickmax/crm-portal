@@ -31,18 +31,28 @@ export async function DELETE() {
   const seed = seedAll() as unknown as Record<string, { id: string }[]>;
   const ids = (key: string) => (seed[key] ?? []).map((r) => r.id);
   const removed: Record<string, number> = {};
+  const skipped: Record<string, string> = {};
   const wipe = async (table: string, column: string, values: string[]) => {
     if (!values.length) return;
     for (let i = 0; i < values.length; i += 100) {
-      const { error, count } = await svc.from(table).delete({ count: "exact" }).in(column, values.slice(i, i + 100));
-      if (error) throw new Error(`${table}: ${error.message}`);
-      removed[table] = (removed[table] ?? 0) + (count ?? 0);
+      try {
+        const { error, count } = await svc.from(table).delete({ count: "exact" }).in(column, values.slice(i, i + 100));
+        if (error) throw new Error(error.message);
+        removed[table] = (removed[table] ?? 0) + (count ?? 0);
+      } catch (e) {
+        // Never abort halfway: record and continue so one stubborn table
+        // can't block the rest. The response lists anything left behind.
+        skipped[table] = e instanceof Error ? e.message.slice(0, 160) : "failed";
+        return;
+      }
     }
   };
 
   try {
     const leadIds = ids("leads");
     const companyIds = (seedAll() as unknown as { companies: { id: string }[] }).companies.map((c) => c.id);
+    // Children first — lead_events references businesses (RESTRICT), so it
+    // must go before companies or the whole wipe aborts on a FK violation.
     await wipe("lead_events", "legacy_place_id", leadIds);
     await wipe("payments", "crm_ref", ids("payments"));
     await wipe("proposals", "crm_ref", ids("proposals"));
@@ -64,5 +74,5 @@ export async function DELETE() {
   } catch (e) {
     return NextResponse.json({ error: e instanceof Error ? e.message : "Clear failed partway." }, { status: 500 });
   }
-  return NextResponse.json({ ok: true, removed });
+  return NextResponse.json({ ok: true, removed, skipped });
 }
