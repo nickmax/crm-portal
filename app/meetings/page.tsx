@@ -52,13 +52,13 @@ export default function MeetingsPage() {
   return (
     <div>
       <PageHead eyebrow="Meetings booked & held" title="Meetings" sub="Book, hold, then record the outcome and next action. No meeting ends without a next step."
-        action={<Dialog open={open} onOpenChange={setOpen}><DialogTrigger asChild><Button className="rounded-full bg-foreground text-background">+ Book meeting</Button></DialogTrigger>
+        action={<Dialog open={open} onOpenChange={setOpen}><DialogTrigger asChild><Button className="rounded-full btn-brand">+ Book meeting</Button></DialogTrigger>
           <DialogContent className="rounded-2xl"><DialogHeader><DialogTitle className="font-display text-2xl">Book a meeting</DialogTitle></DialogHeader>
             <div className="space-y-3">
               <div><Label>Lead</Label><select value={leadId} onChange={(e) => setLeadId(e.target.value)} className="h-10 w-full rounded-xl border px-3 text-sm">{s.leads.map((l) => <option key={l.id} value={l.id}>{companyName(s, l.companyId)}</option>)}</select></div>
               <div><Label>Date &amp; time</Label><Input type="datetime-local" value={date} onChange={(e) => setDate(e.target.value)} className="h-10 rounded-xl" /></div>
               <div><Label>Attendees (comma separated)</Label><Input value={attendees} onChange={(e) => setAttendees(e.target.value)} placeholder="Jane (MD), David (sales)" className="h-10 rounded-xl" /></div>
-              <Button className="w-full rounded-full bg-foreground text-background" onClick={book}>Book + create reminder task</Button>
+              <Button className="w-full rounded-full btn-brand" onClick={book}>Book + create reminder task</Button>
             </div>
           </DialogContent></Dialog>} />
       <div className="grid gap-3">
@@ -83,7 +83,7 @@ export default function MeetingsPage() {
                 <div className="grid w-full gap-2 rounded-xl bg-foreground/5 p-3 lg:max-w-sm">
                   <Label className="text-xs">Outcome notes</Label><Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className="rounded-xl" placeholder="What was agreed?" />
                   <Label className="text-xs">Agreed next action</Label><Input value={next} onChange={(e) => setNext(e.target.value)} className="h-9 rounded-xl" placeholder="Send proposal by Friday" />
-                  <div className="flex gap-2"><Button size="sm" variant="outline" className="rounded-full" onClick={() => setOutcomeFor(null)}>Cancel</Button><Button size="sm" className="rounded-full bg-foreground text-background" onClick={() => saveOutcome(m.id)}>Save</Button></div>
+                  <div className="flex gap-2"><Button size="sm" variant="outline" className="rounded-full" onClick={() => setOutcomeFor(null)}>Cancel</Button><Button size="sm" className="rounded-full btn-brand" onClick={() => saveOutcome(m.id)}>Save</Button></div>
                 </div>
               )}
             </CardContent>

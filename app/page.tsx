@@ -29,7 +29,7 @@ export default function HomePage() {
         <Eyebrow>My workspace</Eyebrow>
         <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
           <h1 className="font-display text-3xl tracking-tight sm:text-4xl lg:text-5xl">Karibu, {currentUser.name.split(" ")[0]}</h1>
-          <Button asChild className="rounded-full bg-foreground text-background"><Link href="/leads?new=1">+ Register lead</Link></Button>
+          <Button asChild className="rounded-full btn-brand"><Link href="/leads?new=1">+ Register lead</Link></Button>
         </div>
         <p className="mt-2 text-muted-foreground">Update a lead from your phone in under a minute. Everything here is yours only.</p>
 
@@ -154,7 +154,7 @@ function OwnerHome() {
         <h1 className="font-display text-3xl tracking-tight sm:text-4xl lg:text-5xl">The whole business, one screen</h1>
         <div className="flex gap-2">
           <Button asChild variant="outline" className="rounded-full"><Link href="/reports">Auto reports</Link></Button>
-          <Button asChild className="rounded-full bg-foreground text-background"><Link href="/leads?new=1">+ Register lead</Link></Button>
+          <Button asChild className="rounded-full btn-brand"><Link href="/leads?new=1">+ Register lead</Link></Button>
         </div>
       </div>
 

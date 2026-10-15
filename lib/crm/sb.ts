@@ -403,10 +403,20 @@ export async function fetchCrmState(
   }
   if (ctx.tables.notifications) {
     const { rows } = await safeSelect<Row>(sb, "notifications", "*").catch(() => ({ rows: [] as Row[], available: false }));
+    // Legacy rows (pre-fix) stored the USER id in app_ref. Those must not
+    // become the notification id (every row would collapse into one per user)
+    // — but they remain the only user pointer, so keep them as the fallback
+    // userId below.
+    const memberKeys = new Set<string>();
+    for (const p of profiles) {
+      memberKeys.add(p.id);
+      if (p.app_ref) memberKeys.add(p.app_ref);
+    }
     partial.notifications = rows.map((r) => {
-      const ref = r.app_ref ?? `n-${r.id}`;
+      const rawRef = (r.app_ref ?? null) as string | null;
+      const ref = rawRef && !memberKeys.has(rawRef) ? rawRef : `n-${r.id}`;
       ctx.notificationIdByRef.set(ref, r.id);
-      return { id: ref, userId: profileMemberId(r.profile_id, profiles) ?? (r.app_ref ?? ""), title: r.title ?? "", body: r.body ?? "", createdAt: iso(r.created_at), read: !!r.read, link: r.link ?? "/" } as Notification;
+      return { id: ref, userId: profileMemberId(r.profile_id, profiles) ?? (rawRef ?? ""), title: r.title ?? "", body: r.body ?? "", createdAt: iso(r.created_at), read: !!r.read, link: r.link ?? "/" } as Notification;
     });
   }
 
@@ -548,6 +558,18 @@ export async function pushDiff(
     }, { onConflict: "crm_ref" }).select("id");
     if (error) errors.push(`contacts/${c.id}: ${error.message}`);
     else if ((data as Row[])?.[0]?.id) ctx.contactIdByRef.set(c.id, (data as Row[])[0].id);
+  }
+  // Contact removals propagate (exact crm_ref match only — nothing else is
+  // ever deleted by sync). prev is the last-pushed snapshot, so only rows
+  // this device previously knew can be removed — no fresh-boot wipe risk.
+  {
+    const alive = new Set(next.contacts.map((c) => c.id));
+    for (const c of prev.contacts) {
+      if (alive.has(c.id)) continue;
+      const { error } = await sb.from("contacts").delete().eq("crm_ref", c.id);
+      if (error) errors.push(`contacts/${c.id} delete: ${error.message}`);
+      else ctx.contactIdByRef.delete(c.id);
+    }
   }
 
   // --- tasks (standalone delegated tasks carry business_id null) ---
@@ -721,7 +743,10 @@ export async function pushDiff(
       const rowId = ctx.notificationIdByRef.get(n.id);
       if (!rowId) {
         const { data, error } = await sb.from("notifications").insert({
-          profile_id: profileUuid(n.userId, ctx), app_ref: n.userId,
+          // app_ref is the stable task/notification key (NOT the user id):
+          // clear-demo and task-clear retire rows by this ref. Storing the
+          // user id here collapsed every user's notifications into one id.
+          profile_id: profileUuid(n.userId, ctx), app_ref: n.id,
           title: n.title, body: n.body, link: n.link, read: n.read,
         }).select("id");
         if (error) errors.push(`notifications/${n.id}: ${error.message}`);

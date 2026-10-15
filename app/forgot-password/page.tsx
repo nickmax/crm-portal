@@ -45,7 +45,7 @@ export default function ForgotPasswordPage() {
               <div><Label>Work email</Label><Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@mathengeinc.com" className="mt-1 h-11 rounded-xl" autoComplete="email" inputMode="email"
                 onKeyDown={(e) => { if (e.key === "Enter") submit(); }} /></div>
               {error && <p className="rounded-xl bg-red-600/10 px-4 py-2.5 text-[13px] text-red-800">{error}</p>}
-              <Button className="w-full rounded-full bg-foreground text-background" disabled={busy} onClick={submit}>
+              <Button className="w-full rounded-full btn-brand" disabled={busy} onClick={submit}>
                 {busy ? "Sending…" : "Send reset link"}
               </Button>
             </>

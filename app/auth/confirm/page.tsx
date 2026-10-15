@@ -54,7 +54,7 @@ function ConfirmInner() {
           <p className="text-center text-sm text-muted-foreground">{t.body}</p>
           {!token_hash && <p className="rounded-xl bg-red-600/10 px-4 py-2.5 text-[13px] text-red-800">This link is incomplete — ask your administrator for a fresh one.</p>}
           {error && <p className="rounded-xl bg-red-600/10 px-4 py-2.5 text-[13px] text-red-800">{error}</p>}
-          <Button className="w-full rounded-full bg-foreground text-background" disabled={busy || !token_hash} onClick={confirm}>
+          <Button className="w-full rounded-full btn-brand" disabled={busy || !token_hash} onClick={confirm}>
             {busy ? "Confirming…" : t.cta}
           </Button>
         </CardContent>

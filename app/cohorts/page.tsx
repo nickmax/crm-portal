@@ -110,7 +110,7 @@ function ManageStructure() {
             <p className="text-sm font-medium">New cohort</p>
             <div className="mt-2 flex gap-2">
               <Input value={cName} onChange={(e) => setCName(e.target.value)} placeholder="Cohort 8 — Q2 2026" className="h-10 rounded-xl" />
-              <Button className="rounded-full bg-foreground text-background" disabled={busy || !cName.trim()} onClick={() => post({ op: "cohort", name: cName })}>Add</Button>
+              <Button className="rounded-full btn-brand" disabled={busy || !cName.trim()} onClick={() => post({ op: "cohort", name: cName })}>Add</Button>
             </div>
           </div>
           <div className="rounded-xl border border-foreground/10 p-4">
@@ -123,7 +123,7 @@ function ManageStructure() {
                   {cohorts.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
                 <Input value={qIndustry} onChange={(e) => setQIndustry(e.target.value)} placeholder="Industry" className="h-10 flex-1 rounded-xl" />
-                <Button className="rounded-full bg-foreground text-background" disabled={busy || !qName.trim()} onClick={() => post({ op: "squad", name: qName, cohortId: qCohort ? Number(qCohort) : null, industry: qIndustry })}>Add</Button>
+                <Button className="rounded-full btn-brand" disabled={busy || !qName.trim()} onClick={() => post({ op: "squad", name: qName, cohortId: qCohort ? Number(qCohort) : null, industry: qIndustry })}>Add</Button>
               </div>
             </div>
           </div>

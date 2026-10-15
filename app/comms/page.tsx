@@ -111,7 +111,7 @@ function CommsInner() {
             <div className="grid gap-2 sm:grid-cols-4">
               {KINDS.map(([v, label, hint]) => (
                 <button key={v} onClick={() => setKind(v)} title={hint}
-                  className={`rounded-xl border px-3 py-2.5 text-left text-[13px] font-medium transition-colors ${kind === v ? "border-foreground bg-foreground text-background" : "border-foreground/15 hover:bg-foreground/5"}`}>
+                  className={`rounded-xl border px-3 py-2.5 text-left text-[13px] font-medium transition-colors ${kind === v ? "pill-brand" : "border-foreground/15 hover:bg-foreground/5"}`}>
                   {label}
                 </button>
               ))}
@@ -124,7 +124,7 @@ function CommsInner() {
               <div className="flex flex-wrap gap-1.5">
                 {ROLES.map((r) => (
                   <button key={r} onClick={() => toggle(roles, r, setRoles)}
-                    className={`rounded-full border px-3.5 py-1.5 text-[13px] font-medium ${roles.includes(r) ? "border-foreground bg-foreground text-background" : "border-foreground/15 hover:bg-foreground/5"}`}>{r}</button>
+                    className={`rounded-full border px-3.5 py-1.5 text-[13px] font-medium ${roles.includes(r) ? "pill-brand" : "border-foreground/15 hover:bg-foreground/5"}`}>{r}</button>
                 ))}
               </div>
               {squads.length > 0 && (
@@ -132,7 +132,7 @@ function CommsInner() {
                 <div className="flex flex-wrap gap-1.5">
                   {squads.map((q) => (
                     <button key={q.id} onClick={() => setSquadIds(squadIds.includes(q.id) ? squadIds.filter((x) => x !== q.id) : [...squadIds, q.id])}
-                      className={`rounded-full border px-3.5 py-1.5 text-[13px] font-medium ${squadIds.includes(q.id) ? "border-foreground bg-foreground text-background" : "border-foreground/15 hover:bg-foreground/5"}`}>{q.name}</button>
+                      className={`rounded-full border px-3.5 py-1.5 text-[13px] font-medium ${squadIds.includes(q.id) ? "pill-brand" : "border-foreground/15 hover:bg-foreground/5"}`}>{q.name}</button>
                   ))}
                 </div></>
               )}
@@ -154,7 +154,7 @@ function CommsInner() {
               Also send by email {status && !status.resendConfigured && <span className="font-mono text-[11px] text-muted-foreground">(queues until Resend key added)</span>}
             </label>
             {result && <p className={`rounded-xl px-4 py-3 text-sm ${result.startsWith("Sent") ? "bg-green-600/10 text-green-800" : "bg-red-600/10 text-red-800"}`}>{result}</p>}
-            <Button className="w-full rounded-full bg-foreground text-background" disabled={sending || !subject.trim() || !message.trim()} onClick={send}>
+            <Button className="w-full btn-brand rounded-full" disabled={sending || !subject.trim() || !message.trim()} onClick={send}>
               {sending ? "Sending…" : `Notify ${audienceCount} ${audienceCount === 1 ? "person" : "people"}`}
             </Button>
           </CardContent>

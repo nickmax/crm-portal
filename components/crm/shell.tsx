@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   LayoutDashboard, Target, KanbanSquare, CheckSquare, CalendarDays,
-  Users, Wallet, Megaphone, BarChart3, IdCard, Settings, Menu, X, LogOut, Send, FolderOpen, BookOpen,
+  Users, Wallet, Megaphone, BarChart3, IdCard, Settings, Menu, X, LogOut, Send, FolderOpen, BookOpen, BookUser,
 } from "lucide-react";
 import { NotificationsPanel } from "@/components/crm/notifications-panel";
 import { useCrm } from "@/lib/crm/store";
@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {  "layout-dashboard": LayoutDashboard, target: Target, kanban: KanbanSquare,
   check: CheckSquare, calendar: CalendarDays, users: Users, wallet: Wallet,
   megaphone: Megaphone, chart: BarChart3, id: IdCard, settings: Settings,
-  send: Send, folder: FolderOpen, book: BookOpen,
+  send: Send, folder: FolderOpen, book: BookOpen, contacts: BookUser,
 };
 
 const PUBLIC_AUTH_ROUTES = ["/login", "/forgot-password", "/set-password", "/auth/"];
@@ -127,7 +127,7 @@ export function CrmShell({ children }: { children: React.ReactNode }) {
               className={cn(
                 "group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm transition-colors",
                 activeItem
-                  ? "bg-foreground font-medium text-background"
+                  ? "btn-brand font-medium"
                   : "text-foreground/70 hover:bg-foreground/5 hover:text-foreground"
               )}
             >
@@ -193,7 +193,7 @@ export function CrmShell({ children }: { children: React.ReactNode }) {
             </div>
             <div className="flex items-center gap-2.5">
               <NotificationsPanel />
-              <Button asChild size="sm" className="rounded-full bg-foreground text-background hover:bg-foreground/90">
+              <Button asChild size="sm" className="btn-brand rounded-full">
                 <Link href="/leads?new=1">+ Register lead</Link>
               </Button>
             </div>

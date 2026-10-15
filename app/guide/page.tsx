@@ -51,7 +51,7 @@ export default function GuidePage() {
         eyebrow="BDP handbook · read once, then work"
         title="Your guide to winning"
         sub="Welcome to the sales team. This page teaches you the system: finding businesses, recording your work from your phone, and getting paid. Every blue button below opens the exact screen it talks about."
-        action={<Button asChild className="rounded-full bg-foreground text-background"><a href={`${APP}/leads?new=1`}>+ Add your first lead</a></Button>}
+        action={<Button asChild className="rounded-full btn-brand"><a href={`${APP}/leads?new=1`}>+ Add your first lead</a></Button>}
       />
       <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
         <aside className="hidden lg:block">
@@ -169,7 +169,7 @@ export default function GuidePage() {
             <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">The whole job, in one line</p>
             <p className="font-display text-3xl">Every lead has an owner. Every action has a next step.</p>
             <div className="flex flex-wrap justify-center gap-2">
-              <Button asChild className="rounded-full bg-foreground text-background"><a href={`${APP}/leads?new=1`}>Add a lead</a></Button>
+              <Button asChild className="rounded-full btn-brand"><a href={`${APP}/leads?new=1`}>Add a lead</a></Button>
               <Button asChild variant="outline" className="rounded-full"><a href={`${APP}/guide/field-manual`}>Open the Field Guide</a></Button>
             </div>
           </div>

@@ -84,7 +84,7 @@ export default function DealsPage() {
                 {d.milestones.length > 0 && <p className="mt-1 break-words font-mono text-xs text-muted-foreground">{d.milestones.map((m) => `${m.label} ${fmtKES(m.amount)}${m.collected ? " ✓" : ""}`).join(" · ")}</p>}
                 {d.outcome === "won" && s.currentUser.role !== "bdp" && (
                   payFor === d.id ? (
-                    <div className="mt-2 flex gap-2"><Input value={payAmount} onChange={(e) => setPayAmount(e.target.value)} inputMode="numeric" placeholder="Amount received" className="h-9 rounded-xl" /><Button size="sm" className="rounded-full bg-foreground text-background" onClick={() => recordPayment(d.id)}>Save</Button><Button size="sm" variant="outline" className="rounded-full" onClick={() => setPayFor(null)}>×</Button></div>
+                    <div className="mt-2 flex gap-2"><Input value={payAmount} onChange={(e) => setPayAmount(e.target.value)} inputMode="numeric" placeholder="Amount received" className="h-9 rounded-xl" /><Button size="sm" className="rounded-full btn-brand" onClick={() => recordPayment(d.id)}>Save</Button><Button size="sm" variant="outline" className="rounded-full" onClick={() => setPayFor(null)}>×</Button></div>
                   ) : <Button size="sm" variant="outline" className="mt-2 rounded-full" onClick={() => setPayFor(d.id)}>Record client payment</Button>
                 )}
               </div>
@@ -99,7 +99,7 @@ export default function DealsPage() {
               <div key={c.id} className="rounded-xl border border-foreground/10 p-4 text-sm">
                 <div className="flex items-center justify-between"><p className="font-medium">{memberName(s, c.bdpId)} · {fmtKES(c.earned)}</p><Badge className={`rounded-full border-0 ${c.status === "paid" ? "bg-green-700 text-white" : c.status === "approved" ? "bg-foreground text-background" : "bg-foreground/10"}`}>{c.status}</Badge></div>
                 <p className="mt-1 font-mono text-xs text-muted-foreground">Eligible {fmtKES(c.eligibleRevenue)} @ {c.rate * 100}% · {c.history.map((h) => h.action).join(" → ")}</p>
-                {s.currentUser.role !== "bdp" && c.status === "pending" && <Button size="sm" className="mt-2 rounded-full bg-foreground text-background" onClick={() => approve(c.id)}>Approve (owner)</Button>}
+                {s.currentUser.role !== "bdp" && c.status === "pending" && <Button size="sm" className="mt-2 rounded-full btn-brand" onClick={() => approve(c.id)}>Approve (owner)</Button>}
                 {s.currentUser.role === "owner" && c.status === "approved" && <Button size="sm" variant="outline" className="ml-2 mt-2 rounded-full" onClick={() => pay(c.id)}>Mark paid</Button>}
               </div>
             ))}

@@ -62,7 +62,11 @@ export async function DELETE() {
     await wipe("contacts", "crm_ref", ids("contacts"));
     await wipe("deals", "crm_ref", ids("opportunities"));
     await wipe("businesses", "legacy_place_id", companyIds);
-    await wipe("notifications", "app_ref", ids("notifications"));
+    // Notifications keyed two ways across history: current rows carry the
+    // notification id in app_ref; rows pushed by older clients carry the
+    // RECIPIENT member id there instead. Wipe both shapes so nothing lingers.
+    const memberIds = (seedAll() as unknown as { members: { id: string }[] }).members.map((m) => m.id);
+    await wipe("notifications", "app_ref", [...ids("notifications"), ...memberIds]);
     await wipe("squads", "app_ref", ids("squads"));
     await wipe("cohorts", "app_ref", ids("cohorts"));
     // Seed campaign is matched by name (campaigns has no app ref).

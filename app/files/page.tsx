@@ -100,7 +100,7 @@ export default function FilesPage() {
                   Notify the whole team
                 </label>
                 {msg && <p className="rounded-xl bg-foreground/5 px-4 py-2.5 text-[13px]">{msg}</p>}
-                <Button className="w-full rounded-full bg-foreground text-background" disabled={busy || !file} onClick={upload}>
+                <Button className="w-full rounded-full btn-brand" disabled={busy || !file} onClick={upload}>
                   {busy ? "Uploading…" : "Upload & share"}
                 </Button>
               </>

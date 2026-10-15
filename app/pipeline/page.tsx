@@ -98,14 +98,14 @@ export default function PipelinePage() {
                         <div className="mt-2 rounded-xl bg-foreground/5 p-2.5">
                           <Label className="text-xs">Loss reason (required)</Label>
                           <Input value={lossReason} onChange={(e) => setLossReason(e.target.value)} placeholder="Price, timing, competitor…" className="mt-1 h-9 rounded-xl" />
-                          <div className="mt-1.5 flex gap-1.5"><Button size="sm" variant="outline" className="rounded-full" onClick={() => setLossFor(null)}>Cancel</Button><Button size="sm" className="rounded-full bg-foreground text-background" onClick={() => closeLost(o.id)}>Save loss</Button></div>
+                          <div className="mt-1.5 flex gap-1.5"><Button size="sm" variant="outline" className="rounded-full" onClick={() => setLossFor(null)}>Cancel</Button><Button size="sm" className="rounded-full btn-brand" onClick={() => closeLost(o.id)}>Save loss</Button></div>
                         </div>
                       )}
                       {winFor === o.id && (
                         <div className="mt-2 rounded-xl bg-foreground/5 p-2.5">
                           <Label className="text-xs">Signed contract value (KES)</Label>
                           <Input value={contractValue} onChange={(e) => setContractValue(e.target.value)} inputMode="numeric" className="mt-1 h-9 rounded-xl" />
-                          <div className="mt-1.5 flex gap-1.5"><Button size="sm" variant="outline" className="rounded-full" onClick={() => setWinFor(null)}>Cancel</Button><Button size="sm" className="rounded-full bg-foreground text-background" onClick={() => closeWon(o.id)}>Record win</Button></div>
+                          <div className="mt-1.5 flex gap-1.5"><Button size="sm" variant="outline" className="rounded-full" onClick={() => setWinFor(null)}>Cancel</Button><Button size="sm" className="rounded-full btn-brand" onClick={() => closeWon(o.id)}>Record win</Button></div>
                         </div>
                       )}
                     </CardContent>

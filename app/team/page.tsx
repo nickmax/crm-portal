@@ -85,7 +85,7 @@ function ClaimOwner() {
           <p className="text-[13px] text-muted-foreground">If you're setting the CRM up, claim ownership. This works once — afterwards only an owner can grant access.</p>
           {msg && <p className="mt-1 text-[13px]">{msg}</p>}
         </div>
-        <Button className="rounded-full bg-foreground text-background" disabled={busy} onClick={claim}>
+        <Button className="rounded-full btn-brand" disabled={busy} onClick={claim}>
           {busy ? "Claiming…" : "Claim owner access"}
         </Button>
       </CardContent>
@@ -130,7 +130,7 @@ function InviteMember() {
               {(["bdp", "captain", "sales", "admin", "owner"] as const).map((r) => <option key={r} value={r}>{ROLE_LABEL[r]}</option>)}
             </select>
           </div>
-          <div className="flex items-end"><Button className="w-full rounded-full bg-foreground text-background" disabled={busy || !email} onClick={invite}>{busy ? "Inviting…" : "Send invite"}</Button></div>
+          <div className="flex items-end"><Button className="w-full rounded-full btn-brand" disabled={busy || !email} onClick={invite}>{busy ? "Inviting…" : "Send invite"}</Button></div>
         </div>
         {msg && <p className="mt-2 rounded-xl bg-foreground/5 px-4 py-2.5 text-[13px]">{msg}</p>}
         <p className="mt-2 font-mono text-[11px] text-muted-foreground">Squads are assigned under Cohorts & squads after they join · {s.members.filter((m) => m.email).length} members with emails</p>

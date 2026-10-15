@@ -66,7 +66,7 @@ function SignInForm() {
             onKeyDown={(e) => { if (e.key === "Enter") submit(); }} /></div>
           {error && <p className="rounded-xl bg-red-600/10 px-4 py-2.5 text-[13px] text-red-800">{error}</p>}
           {auth.profileError && <p className="rounded-xl bg-red-600/10 px-4 py-2.5 text-[13px] text-red-800">{auth.profileError}</p>}
-          <Button className="w-full rounded-full bg-foreground text-background" disabled={busy || auth.loading} onClick={submit}>
+          <Button className="w-full rounded-full btn-brand" disabled={busy || auth.loading} onClick={submit}>
             {busy ? "Signing you in…" : "Sign in"}
           </Button>
           <div className="flex items-center justify-between pt-1 text-[13px]">
@@ -92,7 +92,7 @@ function DemoPicker() {
               <p className="truncate text-sm font-medium">{m.name}</p>
               <p className="truncate font-mono text-[11px] uppercase tracking-wider text-muted-foreground">{ROLE_LABEL[m.role]}</p>
             </div>
-            <Button size="sm" className="rounded-full bg-foreground text-background" onClick={() => { switchUser(m.id); router.push("/"); }}>Enter</Button>
+            <Button size="sm" className="rounded-full btn-brand" onClick={() => { switchUser(m.id); router.push("/"); }}>Enter</Button>
           </CardContent>
         </Card>
       ))}

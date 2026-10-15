@@ -43,6 +43,7 @@ export const NAV_BY_ROLE: Record<Role, { href: string; label: string; icon: stri
   owner: [
     { href: "/", label: "Command centre", icon: "layout-dashboard" },
     { href: "/leads", label: "Leads", icon: "target" },
+    { href: "/contacts", label: "Phonebook", icon: "contacts" },
     { href: "/pipeline", label: "Pipeline", icon: "kanban" },
     { href: "/tasks", label: "Tasks", icon: "check" },
     { href: "/meetings", label: "Meetings", icon: "calendar" },
@@ -58,6 +59,7 @@ export const NAV_BY_ROLE: Record<Role, { href: string; label: string; icon: stri
   admin: [
     { href: "/", label: "Overview", icon: "layout-dashboard" },
     { href: "/leads", label: "Leads", icon: "target" },
+    { href: "/contacts", label: "Phonebook", icon: "contacts" },
     { href: "/pipeline", label: "Pipeline", icon: "kanban" },
     { href: "/tasks", label: "Tasks", icon: "check" },
     { href: "/meetings", label: "Meetings", icon: "calendar" },

@@ -160,3 +160,19 @@ export function seedAll() {
     campaigns: seedCampaigns, audit: seedAudit, notifications: seedNotifications,
   };
 }
+
+// Every fixed demo id, across all slices. Signed-in devices strip these from
+// the local cache on remote boot, so cleared demo data can never resurrect
+// from localStorage — and BDPs never see sample rows on a live system.
+export const SEED_IDS: Set<string> = (() => {
+  const all = seedAll() as unknown as Record<string, { id: string }[]>;
+  const ids = new Set<string>();
+  for (const key of Object.keys(all)) for (const r of all[key] ?? []) ids.add(r.id);
+  // Campaigns match by name (no app ref); company ids double as legacy keys.
+  ids.add("Q1 Growth Sprint — Ordering & Reservations");
+  return ids;
+})();
+
+export function isSeedId(id: string | null | undefined): boolean {
+  return !!id && SEED_IDS.has(id);
+}

@@ -160,7 +160,7 @@ function TasksInner() {
               </>
             )}
             {canDelegate && (
-              <Button size="sm" className="rounded-full bg-foreground text-background" onClick={() => setShowDelegate(true)}>
+              <Button size="sm" className="rounded-full bg-brand text-white" onClick={() => setShowDelegate(true)}>
                 + Delegate a task
               </Button>
             )}
@@ -271,7 +271,7 @@ function TaskGroup({ title, items, focusId, empty, memberName, leadHref, onEdit,
                 </div>
                 <div className="flex shrink-0 gap-1.5">
                   <Button size="sm" variant="outline" className="rounded-full" onClick={() => onEdit(t)}>Edit</Button>
-                  <Button size="sm" className="rounded-full bg-foreground text-background" onClick={() => onClear(t)}>Clear</Button>
+                  <Button size="sm" className="rounded-full bg-brand text-white" onClick={() => onClear(t)}>Clear</Button>
                 </div>
               </div>
             </div>
@@ -389,7 +389,7 @@ function DelegateDialog({ onClose, onDone }: { onClose: () => void; onDone: (msg
         </div>
       </div>
       {err && <p className="rounded-xl bg-red-600/10 px-4 py-2.5 text-sm text-red-800">{err}</p>}
-      <Button className="w-full rounded-full bg-foreground text-background" disabled={busy || !title.trim() || !picked.length || !due} onClick={submit}>
+      <Button className="w-full rounded-full bg-brand text-white" disabled={busy || !title.trim() || !picked.length || !due} onClick={submit}>
         {busy ? "Delegating…" : `Delegate to ${picked.length} ${picked.length === 1 ? "person" : "people"}`}
       </Button>
     </Overlay>
@@ -471,7 +471,7 @@ function EditDialog({ task, onClose, onDone }: { task: CrmTask; onClose: () => v
         </div>
       )}
       {err && <p className="rounded-xl bg-red-600/10 px-4 py-2.5 text-sm text-red-800">{err}</p>}
-      <Button className="w-full rounded-full bg-foreground text-background" disabled={busy || !title.trim() || !due} onClick={submit}>
+      <Button className="w-full rounded-full bg-brand text-white" disabled={busy || !title.trim() || !due} onClick={submit}>
         {busy ? "Saving…" : "Save changes"}
       </Button>
     </Overlay>
@@ -489,7 +489,7 @@ function ClearDialog({ task, memberName, onClose, onConfirm }: {
       <div><Label>Done-note <span className="font-mono text-[11px] text-muted-foreground">(optional — sent to the owner)</span></Label><Textarea value={note} onChange={(e) => setNote(e.target.value)} rows={2} placeholder="Called George — 200 units/month confirmed." className="mt-1 rounded-xl" /></div>
       <div className="flex gap-2">
         <Button variant="outline" className="flex-1 rounded-full" onClick={onClose}>Keep it</Button>
-        <Button className="flex-1 rounded-full bg-foreground text-background" onClick={() => onConfirm(note.trim())}>Mark done</Button>
+        <Button className="flex-1 rounded-full bg-brand text-white" onClick={() => onConfirm(note.trim())}>Mark done</Button>
       </div>
     </Overlay>
   );
@@ -521,5 +521,5 @@ function toLocalInput(d: Date): string {
 
 export function TaskOverdueBadge({ count }: { count: number }) {
   if (!count) return null;
-  return <Badge className="ml-auto rounded-full bg-foreground text-background">{count}</Badge>;
+  return <Badge className="ml-auto rounded-full bg-brand text-white">{count}</Badge>;
 }

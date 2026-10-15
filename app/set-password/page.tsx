@@ -53,7 +53,7 @@ export default function SetPasswordPage() {
               <div><Label>Repeat password</Label><Input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="Repeat it" className="mt-1 h-11 rounded-xl" autoComplete="new-password"
                 onKeyDown={(e) => { if (e.key === "Enter") submit(); }} /></div>
               {error && password && <p className="rounded-xl bg-red-600/10 px-4 py-2.5 text-[13px] text-red-800">{error}</p>}
-              <Button className="w-full rounded-full bg-foreground text-background" disabled={busy} onClick={submit}>
+              <Button className="w-full rounded-full btn-brand" disabled={busy} onClick={submit}>
                 {busy ? "Saving…" : "Save & enter"}
               </Button>
             </>

@@ -8,7 +8,7 @@ import { LEAD_STATUS_LABEL, OPP_STAGE_LABEL } from "@/lib/crm/types";
 export function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
     <span className="inline-flex items-center gap-3 font-mono text-xs text-muted-foreground">
-      <span className="h-px w-8 bg-foreground/30" />
+      <span className="h-px w-8 bg-brand" />
       {children}
     </span>
   );
@@ -41,13 +41,13 @@ export function StatCard({ label, value, hint, href }: { label: string; value: s
 }
 
 const LEAD_TONE: Record<string, string> = {
-  new: "bg-foreground text-background",
+  new: "bg-brand text-white",
   under_review: "bg-foreground/10 text-foreground",
   accepted: "bg-green-600/15 text-green-800",
   contacting: "bg-foreground/10 text-foreground",
   qualified: "bg-green-600/15 text-green-800",
-  meeting_booked: "bg-foreground text-background",
-  proposal: "bg-foreground text-background",
+  meeting_booked: "bg-brand text-white",
+  proposal: "bg-brand text-white",
   won: "bg-green-700 text-white",
   lost: "bg-red-600/15 text-red-800",
   rejected: "bg-red-600/15 text-red-800",
@@ -64,7 +64,7 @@ export function StageBadge({ stage }: { stage: OppStage }) {
   const done = stage === "won";
   const bad = stage === "lost";
   return (
-    <Badge className={cn("rounded-full border-0", done ? "bg-green-700 text-white" : bad ? "bg-red-600/15 text-red-800" : hot ? "bg-foreground text-background" : "bg-secondary text-secondary-foreground")}>
+    <Badge className={cn("rounded-full border-0", done ? "bg-green-700 text-white" : bad ? "bg-red-600/15 text-red-800" : hot ? "bg-brand text-white" : "bg-secondary text-secondary-foreground")}>
       {OPP_STAGE_LABEL[stage]}
     </Badge>
   );

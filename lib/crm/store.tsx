@@ -5,7 +5,7 @@ import type {
   Activity, AuditEntry, Campaign, Cohort, Commission, Company, Contact, CrmTask,
   Deal, Lead, Meeting, Member, Notification, Opportunity, Payment, Proposal, Squad,
 } from "./types";
-import { seedAll, seedCohorts, seedSquads } from "./seed";
+import { seedAll, seedCohorts, seedSquads, isSeedId } from "./seed";
 import { useAuth } from "./auth";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
@@ -83,6 +83,42 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
     setState((s) => (s.currentUserId === id ? s : { ...s, currentUserId: id }));
   }, [auth.loading, auth.currentMember]);
 
+  // Demo seed is for logged-out exploration only. The moment a real session
+  // exists, strip every seed row from the on-screen state at once — BDPs
+  // never see sample leads, squads or members, even mid-session, even if a
+  // previous clear only ran on the server.
+  useEffect(() => {
+    if (!remote || !auth.user) return;
+    // Returns the previous state untouched when nothing is seeded, so this
+    // never cascades — it fires once per session change at most.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setState((s) => {
+      const scrub = <T extends { id: string }>(rows: T[]): T[] =>
+        rows.filter((r) => !isSeedId(r.id));
+      const dirty =
+        s.cohorts.some((r) => isSeedId(r.id)) || s.squads.some((r) => isSeedId(r.id)) ||
+        s.members.some((r) => isSeedId(r.id)) || s.companies.some((r) => isSeedId(r.id)) ||
+        s.contacts.some((r) => isSeedId(r.id)) || s.leads.some((r) => isSeedId(r.id)) ||
+        s.opportunities.some((r) => isSeedId(r.id)) || s.tasks.some((r) => isSeedId(r.id)) ||
+        s.meetings.some((r) => isSeedId(r.id)) || s.proposals.some((r) => isSeedId(r.id)) ||
+        s.deals.some((r) => isSeedId(r.id)) || s.payments.some((r) => isSeedId(r.id)) ||
+        s.commissions.some((r) => isSeedId(r.id)) || s.activities.some((r) => isSeedId(r.id)) ||
+        s.campaigns.some((r) => isSeedId(r.id)) || s.audit.some((r) => isSeedId(r.id)) ||
+        s.notifications.some((r) => isSeedId(r.id));
+      if (!dirty) return s;
+      return {
+        ...s,
+        cohorts: scrub(s.cohorts), squads: scrub(s.squads), members: scrub(s.members),
+        companies: scrub(s.companies), contacts: scrub(s.contacts), leads: scrub(s.leads),
+        opportunities: scrub(s.opportunities), tasks: scrub(s.tasks), meetings: scrub(s.meetings),
+        proposals: scrub(s.proposals), deals: scrub(s.deals), payments: scrub(s.payments),
+        commissions: scrub(s.commissions), activities: scrub(s.activities),
+        campaigns: scrub(s.campaigns), audit: scrub(s.audit), notifications: scrub(s.notifications),
+      };
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [remote, auth.user?.id]);
+
   // Persist locally (offline fallback + instant reloads)
   useEffect(() => {
     try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {}
@@ -135,16 +171,34 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
         if (!ctx.tables.core) throw new Error("Core tables unreachable — check the migration + Data API grants.");
 
         const local = stateRef.current;
+        // Scrub the demo seed out of the local cache: any signed-in device
+        // adopts remote as truth, and seed rows must never resurrect from
+        // localStorage after the owner clears them (nor be visible to BDPs).
+        // Logged-out demo mode is unaffected — it never reaches this branch.
+        const scrub = <T extends { id: string }>(rows: T[]): T[] =>
+          rows.filter((r) => !isSeedId(r.id));
+        const sieved: CrmState = {
+          ...local,
+          cohorts: scrub(local.cohorts), squads: scrub(local.squads),
+          members: scrub(local.members), companies: scrub(local.companies),
+          contacts: scrub(local.contacts), leads: scrub(local.leads),
+          opportunities: scrub(local.opportunities), tasks: scrub(local.tasks),
+          meetings: scrub(local.meetings), proposals: scrub(local.proposals),
+          deals: scrub(local.deals), payments: scrub(local.payments),
+          commissions: scrub(local.commissions), activities: scrub(local.activities),
+          campaigns: scrub(local.campaigns), audit: scrub(local.audit),
+          notifications: scrub(local.notifications),
+        };
         const hasRemoteLeads = (partial.leads?.length ?? 0) > 0;
         if (!hasRemoteLeads) {
           // Fresh backend: no CRM rows exist anywhere. Start empty — demo seed
           // is local-only (logged-out demo mode) and must never pollute a live
           // system. Real cohorts/squads are created under Cohorts & squads.
           const clean: CrmState = {
-            cohorts: [], squads: [], members: local.members, companies: [], contacts: [],
+            cohorts: [], squads: [], members: sieved.members, companies: [], contacts: [],
             leads: [], opportunities: [], tasks: [], meetings: [], proposals: [], deals: [],
             payments: [], commissions: [], activities: [], campaigns: [], audit: [],
-            notifications: [], currentUserId: local.currentUserId,
+            notifications: [], currentUserId: sieved.currentUserId,
           };
           setState(clean);
           lastPushedRef.current = clean;
@@ -159,27 +213,27 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
             return [...base, ...localRows.filter((r) => !ids.has(r.id))];
           };
           const merged: CrmState = {
-            ...local,
-            cohorts: partial.cohorts?.length ? partial.cohorts : local.cohorts,
-            squads: partial.squads?.length ? partial.squads : local.squads,
-            companies: union(partial.companies, local.companies, local.companies),
-            contacts: union(partial.contacts, local.contacts, local.contacts),
-            leads: union(partial.leads, local.leads, local.leads),
-            opportunities: union(partial.opportunities, local.opportunities, local.opportunities),
-            tasks: union(partial.tasks, local.tasks, local.tasks),
-            meetings: union(partial.meetings, local.meetings, local.meetings),
-            proposals: partial.proposals?.length ? partial.proposals : local.proposals,
-            deals: union(partial.deals, local.deals, local.deals),
-            payments: union(partial.payments, local.payments, local.payments),
-            commissions: union(partial.commissions, local.commissions, local.commissions),
-            activities: partial.activities ?? local.activities,
-            campaigns: partial.campaigns?.length ? partial.campaigns : local.campaigns,
-            audit: partial.audit ?? [...local.audit],
-            notifications: union(partial.notifications, local.notifications, local.notifications),
+            ...sieved,
+            cohorts: partial.cohorts?.length ? partial.cohorts : sieved.cohorts,
+            squads: partial.squads?.length ? partial.squads : sieved.squads,
+            companies: union(partial.companies, sieved.companies, sieved.companies),
+            contacts: union(partial.contacts, sieved.contacts, sieved.contacts),
+            leads: union(partial.leads, sieved.leads, sieved.leads),
+            opportunities: union(partial.opportunities, sieved.opportunities, sieved.opportunities),
+            tasks: union(partial.tasks, sieved.tasks, sieved.tasks),
+            meetings: union(partial.meetings, sieved.meetings, sieved.meetings),
+            proposals: partial.proposals?.length ? partial.proposals : sieved.proposals,
+            deals: union(partial.deals, sieved.deals, sieved.deals),
+            payments: union(partial.payments, sieved.payments, sieved.payments),
+            commissions: union(partial.commissions, sieved.commissions, sieved.commissions),
+            activities: partial.activities ?? sieved.activities,
+            campaigns: partial.campaigns?.length ? partial.campaigns : sieved.campaigns,
+            audit: partial.audit ?? [...sieved.audit],
+            notifications: union(partial.notifications, sieved.notifications, sieved.notifications),
           };
           // Append-only trackers: merge remote + any local-only entries.
           const remoteAct = new Set((partial.activities ?? []).map((a) => `${a.leadId}|${a.summary}|${a.createdAt}`));
-          merged.activities = [...(partial.activities ?? []), ...local.activities.filter((a) => !ctx.pushedActivityIds.has(a.id) && !remoteAct.has(`${a.leadId}|${a.summary}|${a.createdAt}`))];
+          merged.activities = [...(partial.activities ?? []), ...sieved.activities.filter((a) => !ctx.pushedActivityIds.has(a.id) && !remoteAct.has(`${a.leadId}|${a.summary}|${a.createdAt}`))];
           setState(merged);
           lastPushedRef.current = merged;
           setSyncStatus("synced");
