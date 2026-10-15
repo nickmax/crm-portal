@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
+    {
+      "path": "/api/tasks/reminders?slot=midday",
+      "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/tasks/reminders?slot=closing",
+      "schedule": "0 14 * * *"
+    }
+  ]
+}

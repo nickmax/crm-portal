@@ -9,7 +9,8 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "verify:supabase": "node scripts/verify-supabase.mjs",
-    "verify:sync": "tsx scripts/verify-app-sync.mts"
+    "verify:sync": "tsx scripts/verify-app-sync.mts",
+    "verify:tasks": "tsx scripts/verify-delegated-tasks.mts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

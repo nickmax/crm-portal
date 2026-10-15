@@ -118,15 +118,20 @@ export interface Activity {
   createdAt: string;
 }
 
+export type TaskPriority = "low" | "normal" | "high";
+
 export interface CrmTask {
   id: string;
   leadId: string | null;
   companyId: string | null;
-  ownerId: string;
+  ownerId: string; // assignee (member id: profile uuid or app ref)
   title: string;
+  description?: string;
   dueAt: string;
   status: TaskStatus;
   createdAt: string;
+  createdBy?: string; // member id of the delegator
+  priority?: TaskPriority;
 }
 
 export interface Opportunity {

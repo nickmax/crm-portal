@@ -223,11 +223,12 @@ export async function fetchCrmState(
   }
   partial.contacts = contacts;
 
-  // Tasks / meetings for CRM leads
+  // Tasks: every app-owned row (crm_ref set), INCLUDING standalone delegated
+  // tasks with no lead/business link. Lead-linked rows resolve their company.
   const leadRefs = bizRows.map((r) => r.crm_lead_ref).filter(Boolean) as string[];
   const tasks: CrmTask[] = [];
-  if (leadRefs.length) {
-    const { data } = await sb.from("followup_tasks").select("*").in("lead_ref", leadRefs);
+  {
+    const { data } = await sb.from("followup_tasks").select("*").not("crm_ref", "is", null).limit(2000);
     for (const r of (data ?? []) as Row[]) {
       if (r.crm_ref) ctx.taskIdByRef.set(r.crm_ref, r.id);
       const biz = bizRows.find((b) => b.crm_lead_ref === r.lead_ref);
@@ -237,9 +238,12 @@ export async function fetchCrmState(
         companyId: biz?.legacy_place_id ?? null,
         ownerId: r.assignee ?? "",
         title: r.title,
+        description: r.description ?? "",
         dueAt: iso(r.due_at),
         status: r.status === "done" ? "done" : "open",
         createdAt: iso(r.created_at),
+        createdBy: r.created_by ?? undefined,
+        priority: ["low", "normal", "high"].includes(r.priority) ? r.priority : "normal",
       });
     }
   }
@@ -546,19 +550,30 @@ export async function pushDiff(
     else if ((data as Row[])?.[0]?.id) ctx.contactIdByRef.set(c.id, (data as Row[])[0].id);
   }
 
-  // --- tasks ---
+  // --- tasks (standalone delegated tasks carry business_id null) ---
   const prevTasks = new Map(prev.tasks.map((t) => [t.id, t]));
   for (const t of diff(prev.tasks, next.tasks)) {
-    const bizId = t.companyId ? bizIdForCompany(t.companyId) : undefined;
-    if (!bizId) continue;
+    // Resolve the business when the task links to a lead/company; delegated
+    // standalone tasks legitimately have none (business_id is nullable).
+    let bizId: number | null = t.companyId ? (bizIdForCompany(t.companyId) ?? null) : null;
+    if (bizId == null && t.leadId) bizId = ctx.businessIdByLeadRef.get(t.leadId) ?? null;
     const was = prevTasks.get(t.id);
-    const payload: Row = {
+    const full: Row = {
       crm_ref: t.id, business_id: bizId, title: t.title,
+      description: t.description ?? "",
+      created_by: t.createdBy ?? null,
+      priority: t.priority ?? "normal",
       status: t.status === "done" ? "done" : "pending",
       assignee: t.ownerId || null, due_at: t.dueAt, lead_ref: t.leadId,
     };
-    if (t.status === "done" && was?.status !== "done") payload.completed_at = new Date().toISOString();
-    const { data, error } = await sb.from("followup_tasks").upsert(payload, { onConflict: "crm_ref" }).select("id");
+    if (t.status === "done" && was?.status !== "done") full.completed_at = new Date().toISOString();
+    let { data, error } = await sb.from("followup_tasks").upsert(full, { onConflict: "crm_ref" }).select("id");
+    if (error && /column|schema cache|PGRST/i.test(error.message)) {
+      // Backend predates the delegated-tasks migration — retry minimal.
+      const { description: _d, created_by: _c, priority: _p, ...minimal } = full;
+      void _d; void _c; void _p;
+      ({ data, error } = await sb.from("followup_tasks").upsert(minimal, { onConflict: "crm_ref" }).select("id"));
+    }
     if (error) errors.push(`tasks/${t.id}: ${error.message}`);
     else if ((data as Row[])?.[0]?.id) ctx.taskIdByRef.set(t.id, (data as Row[])[0].id);
   }

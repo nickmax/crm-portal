@@ -6,8 +6,9 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   LayoutDashboard, Target, KanbanSquare, CheckSquare, CalendarDays,
-  Users, Wallet, Megaphone, BarChart3, IdCard, Settings, Menu, X, Bell, LogOut, Send, FolderOpen, BookOpen,
+  Users, Wallet, Megaphone, BarChart3, IdCard, Settings, Menu, X, LogOut, Send, FolderOpen, BookOpen,
 } from "lucide-react";
+import { NotificationsPanel } from "@/components/crm/notifications-panel";
 import { useCrm } from "@/lib/crm/store";
 import { useAuth } from "@/lib/crm/auth";
 import { NAV_BY_ROLE } from "@/lib/crm/permissions";
@@ -28,7 +29,7 @@ function isPublicAuthRoute(pathname: string): boolean {
 }
 
 export function CrmShell({ children }: { children: React.ReactNode }) {
-  const { currentUser, members, switchUser, notifications, tasks, remote, syncStatus, syncError, retrySync } = useCrm();
+  const { currentUser, members, switchUser, tasks, remote, syncStatus, syncError, retrySync } = useCrm();
   const auth = useAuth();
   const pathname = usePathname();
   const router = useRouter();
@@ -61,7 +62,6 @@ export function CrmShell({ children }: { children: React.ReactNode }) {
   if (isPublicAuthRoute(pathname)) return <>{children}</>;
 
   const nav = NAV_BY_ROLE[currentUser.role] ?? NAV_BY_ROLE.bdp;
-  const myUnread = notifications.filter((n) => n.userId === currentUser.id && !n.read).length;
   const myOverdue = tasks.filter((t) => t.ownerId === currentUser.id && t.status !== "done" && new Date(t.dueAt).getTime() < Date.now()).length;
 
   const sidebar = (
@@ -192,14 +192,7 @@ export function CrmShell({ children }: { children: React.ReactNode }) {
               </span>
             </div>
             <div className="flex items-center gap-2.5">
-              <Link href="/tasks" className="relative rounded-full border border-foreground/15 p-2.5 transition-colors hover:bg-foreground/5" aria-label={`Notifications, ${myUnread} unread`}>
-                <Bell className="h-4 w-4" />
-                {myUnread > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-foreground px-1 text-[10px] font-medium text-background">
-                    {myUnread}
-                  </span>
-                )}
-              </Link>
+              <NotificationsPanel />
               <Button asChild size="sm" className="rounded-full bg-foreground text-background hover:bg-foreground/90">
                 <Link href="/leads?new=1">+ Register lead</Link>
               </Button>
